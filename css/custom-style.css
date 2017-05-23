@@ -1,0 +1,284 @@
+@import url(font-awesome.css);
+@import url(animate.min.css);
+@import url(materialdesignicons.css);
+
+* {
+    font-family: 'Roboto', sans-serif;
+}
+html, body {
+    height: 100%;
+}
+body {
+    margin:0;
+    padding:0;
+}
+
+/*scroll-bar webkit*/
+::-webkit-scrollbar{
+    width: 2px;
+    background: transparent;
+}
+::-webkit-scrollbar-thumb{
+    background: lightblue;
+}
+
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../fonts/MaterialIcons-Regular.eot); /* For IE6-8 */
+    src: local('Material Icons'), local('MaterialIcons-Regular'), url(../fonts/MaterialIcons-Regular.woff2) format('woff2'), url(../fonts/MaterialIcons-Regular.woff) format('woff'), url(../fonts/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px; /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+
+.navbar-brand {
+    font-family: 'Satisfy', cursive;
+    font-size: 25px;
+}
+
+/*h1,h2,h3,h4,h5,h6{
+	color: orange;
+    }*/
+    #loader-wrapper {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+    }
+
+    #loader {
+        display: block;
+        position: relative;
+        right: 50%;
+        top: 50%;
+        width: 150px;
+        height: 150px;
+        margin: -75px -75px 0 0;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #3498db;
+        -webkit-animation: spin 2s linear infinite;
+        /* Chrome, Opera 15+, Safari 5+ */
+        animation: spin 2s linear infinite;
+        /* Chrome, Firefox 16+, IE 10+, Opera */
+        z-index: 1001;
+    }
+
+    #loader:before {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #e74c3c;
+        -webkit-animation: spin 3s linear infinite;
+        /* Chrome, Opera 15+, Safari 5+ */
+        animation: spin 3s linear infinite;
+        /* Chrome, Firefox 16+, IE 10+, Opera */
+    }
+
+    #loader:after {
+        content: "";
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: #f9c922;
+        -webkit-animation: spin 1.5s linear infinite;
+        /* Chrome, Opera 15+, Safari 5+ */
+        animation: spin 1.5s linear infinite;
+        /* Chrome, Firefox 16+, IE 10+, Opera */
+    }
+
+    @-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+            /* Chrome, Opera 15+, Safari 3.1+ */
+            -ms-transform: rotate(0deg);
+            /* IE 9 */
+            transform: rotate(0deg);
+            /* Firefox 16+, IE 10+, Opera */
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+            /* Chrome, Opera 15+, Safari 3.1+ */
+            -ms-transform: rotate(360deg);
+            /* IE 9 */
+            transform: rotate(360deg);
+            /* Firefox 16+, IE 10+, Opera */
+        }
+    }
+
+    @keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+            /* Chrome, Opera 15+, Safari 3.1+ */
+            -ms-transform: rotate(0deg);
+            /* IE 9 */
+            transform: rotate(0deg);
+            /* Firefox 16+, IE 10+, Opera */
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+            /* Chrome, Opera 15+, Safari 3.1+ */
+            -ms-transform: rotate(360deg);
+            /* IE 9 */
+            transform: rotate(360deg);
+            /* Firefox 16+, IE 10+, Opera */
+        }
+    }
+
+    #loader-wrapper .loader-section {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,255,0.1);
+        z-index: 1000;
+        -webkit-transform: translateX(10deg);
+        /* Chrome, Opera 15+, Safari 3.1+ */
+        -ms-transform: translateX(10deg);
+        /* IE 9 */
+        transform: translateX(10deg);
+        /* Firefox 16+, IE 10+, Opera */
+    }
+
+    #loader-wrapper .loader-section.section-left {
+        left: 0;
+    }
+
+    #loader-wrapper .loader-section.section-right {
+        right: 0;
+    }
+    /* Loaded */
+
+    .loaded #loader-wrapper .loader-section.section-left {
+        -webkit-transform: translateX(-100%);
+        /* Chrome, Opera 15+, Safari 3.1+ */
+        -ms-transform: translateX(-100%);
+        /* IE 9 */
+        transform: translateX(-100%);
+        /* Firefox 16+, IE 10+, Opera */
+        -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+        transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    }
+
+    .loaded #loader-wrapper .loader-section.section-right {
+        -webkit-transform: translateX(100%);
+        /* Chrome, Opera 15+, Safari 3.1+ */
+        -ms-transform: translateX(100%);
+        /* IE 9 */
+        transform: translateX(100%);
+        /* Firefox 16+, IE 10+, Opera */
+        -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+        transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    }
+
+    .loaded #loader {
+        opacity: 0;
+        -webkit-transition: all 0.3s ease-out;
+        transition: all 0.3s ease-out;
+    }
+
+    .loaded #loader-wrapper {
+        visibility: hidden;
+        -webkit-transform: translateY(-100%);
+        /* Chrome, Opera 15+, Safari 3.1+ */
+        -ms-transform: translateY(-100%);
+        /* IE 9 */
+        transform: translateY(-100%);
+        /* Firefox 16+, IE 10+, Opera */
+        -webkit-transition: all 0.3s 1s ease-out;
+        transition: all 0.3s 1s ease-out;
+    }
+    /* JavaScript Turned Off */
+
+    .no-js #loader-wrapper {
+        display: none;
+    }
+
+    .progress {
+        background-color: rgba(255, 64, 129, 0.22);
+    }
+
+    /*TOAST MESSAGE*/
+    #toast-container {
+        top: auto !important;
+        right:auto !important;
+        bottom: 80%;
+        left: 25%;
+    }
+
+    /*LANDING PAGE STYLE*/
+    #navigation{
+        height: 9%;
+    }
+    #main-wrapper{
+        clear: both;
+        height: 91%;
+    }
+    #main-wrapper #folders{
+        height: 100%;
+    }
+    .message-folders, .message-view, .message-list {
+        height:100%;
+    }
+    .message-folders{
+        /*background-color: rgba(0,0,0,0.2);*/
+    }
+    .profile-settings li, .profile-settings a{
+        color: white;
+        display: inline-block;
+    }
+    h6{
+        font-size: 11px;
+    }
+
+
+    #other-options{
+        height: 88%;
+    }
+
+    .chat-message-box{
+        height: 100%;
+    }
+    input{
+        width: 500px;
+    }
+    #other-options{
+        width: 100%;
+    }
+    #message-specific-view{
+        width: 100%;
+    }

@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Call Options</title>
+    <link type="text/css" href="/custom_style.css" rel="stylesheet" />
+    <link type="text/css" href="/bootstrap.css" rel="stylesheet" />
+    <link type="text/css" href="/animate.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron text-center">
+            <button class="btn btn-info" id="audio_call">Audio call <span class="mdi mdi-audio"></span></button>
+            <button class="btn btn-warning" id="video_call">Video call <span class="mdi mdi-video"></span></button>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="text-center">
+            <h6>Testing communication with webRTC and all new features</h6>
+            <a href="/end.html">here</a>
+            <video src="" id="video" style="width: 400px; height: 400px;" autoplay="autoplay"></video>
+            <canvas id="preview" style="display: none"></canvas>
+            <div id="logger"></div>
+        </div>
+        <div>
+            <img id="play" />
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="/jquery-3.1.1.js"></script>
+    <script src="/bootstrap.js"></script>
+    <script src="/smooth-scroll.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        /*
+        https://github.com/DannySofftie/Messaging.git
+        */
+        var video = $('#play');
+
+        document.getElementById('audio_calling').addEventListener('click', function () {
+            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+
+            // listen to an audio stream from the microphone
+            alert('Heey');
+
+        });
+
+        $('#video_calling').click(function () {
+            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+
+
+        })
+        var canvas = document.getElementById('preview');
+        var context = canvas.getContext('2d');
+        canvas.width = 800;
+        canvas.height = 600;
+        context.width = canvas.width;
+        context.height = canvas.height;
+
+        var video = document.getElementById('video');
+        var socket = io();
+
+        function logger(message) {
+            $('#logger').text(message);
+        }
+
+        function loadCamera(stream) {
+            logger('Camera connection [OK]');
+            video.src = window.URL.createObjectURL(stream);
+        }
+
+        function loadFailed() {
+            logger('Your camera is not probably connected');
+        }
+
+        function viewVideo(video, context) {
+            context.drawImage(video, 0, 0, context.width, context.height);
+            socket.emit('stream', canvas.toDataURL('video/webp'));
+        }
+
+        $(function () {
+            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+
+            if (navigator.getUserMedia) {
+                navigator.getUserMedia({ video: true, audio: true }, loadCamera, loadFailed);
+
+            }
+
+            setInterval(function () {
+                viewVideo(video, context)
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
+
+

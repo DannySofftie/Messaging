@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Node Js test application</title>
+    <link type="text/css" href="/custom_style.css" rel="stylesheet" />
+    <link type="text/css" href="/bootstrap.css" rel="stylesheet" />
+    <link type="text/css" href="/animate.css" rel="stylesheet" />
+</head>
+<body class="container">
+    <div class="jumbotron bg-warning">
+        <h3>Node js Receiver side.</h3>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="text-center">
+        <h6>Video will be displayed here</h6>
+        <img id="play" />
+
+    </div>
+    <script src="/jquery-3.1.1.js"></script>
+    <script src="/bootstrap.js"></script>
+    <script src="/smooth-scroll.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        var socket = io();
+        socket.on('stream', function (image) {
+
+            $('#play').attr('src', image);
+        });
+         
+    </script>
+</body>
+</html>
+
