@@ -294,6 +294,8 @@
     <Folder Include="image_uploads" />
     <Folder Include="includes\call_handler\assets" />
     <Folder Include="includes\call_handler\files" />
+    <Folder Include="includes\call_handler\fonts\" />
+    <Folder Include="includes\call_handler\fonts\roboto\" />
     <Folder Include="includes\call_handler\js" />
     <Folder Include="includes\call_handler" />
     <Folder Include="includes\logdata" />
@@ -315,5 +317,41 @@
     <Folder Include="packages\jQuery.Validation.1.16.0\Content" />
     <Folder Include="packages\jQuery.Validation.1.16.0" />
     <Folder Include="packages" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".htaccess" />
+    <Content Include="includes\call_handler\assets\materialdesignicons.css" />
+    <Content Include="includes\call_handler\fonts\fontawesome-webfont.eot" />
+    <Content Include="includes\call_handler\fonts\fontawesome-webfont.svg" />
+    <Content Include="includes\call_handler\fonts\fontawesome-webfont.ttf" />
+    <Content Include="includes\call_handler\fonts\fontawesome-webfont.woff" />
+    <Content Include="includes\call_handler\fonts\fontawesome-webfont.woff2" />
+    <Content Include="includes\call_handler\fonts\FontAwesome.otf" />
+    <Content Include="includes\call_handler\fonts\materialdesignicons-webfont.eot" />
+    <Content Include="includes\call_handler\fonts\materialdesignicons-webfont.svg" />
+    <Content Include="includes\call_handler\fonts\materialdesignicons-webfont.ttf" />
+    <Content Include="includes\call_handler\fonts\materialdesignicons-webfont.woff" />
+    <Content Include="includes\call_handler\fonts\materialdesignicons-webfont.woff2" />
+    <Content Include="includes\call_handler\fonts\MaterialIcons-Regular.woff" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Bold.eot" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Bold.ttf" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Bold.woff" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Bold.woff2" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Light.eot" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Light.ttf" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Light.woff" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Light.woff2" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Medium.eot" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Medium.ttf" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Medium.woff" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Medium.woff2" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Regular.eot" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Regular.ttf" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Regular.woff" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Regular.woff2" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Thin.eot" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Thin.ttf" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Thin.woff" />
+    <Content Include="includes\call_handler\fonts\roboto\Roboto-Thin.woff2" />
   </ItemGroup>
 </Project>

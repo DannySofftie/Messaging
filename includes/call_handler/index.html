@@ -5,17 +5,19 @@
     <link type="text/css" href="/custom_style.css" rel="stylesheet" />
     <link type="text/css" href="/bootstrap.css" rel="stylesheet" />
     <link type="text/css" href="/animate.css" rel="stylesheet" />
+    <link type="text/css" href="/materialdesignicons.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="container">
-        <div class="jumbotron text-center">
-            <button class="btn btn-info" id="audio_call">Audio call <span class="mdi mdi-audio"></span></button>
+    <div class="bg-faded">
+        <div class="jumbotron text-center bg-info" style="padding: 30px 0;">
+            <div style="position: absolute; top: 2px; right: 2px;">
+                <button class="btn btn-sm btn-danger" id="close_window">Close</button>
+            </div>
+            <h5>Choose how to call your friend.</h5>
+            <button class="btn btn-success" id="audio_call">Audio call <span class="mdi mdi-microphone-settings"></span></button>
             <button class="btn btn-warning" id="video_call">Video call <span class="mdi mdi-video"></span></button>
         </div>
-        <div class="dropdown-divider"></div>
         <div class="text-center">
-            <h6>Testing communication with webRTC and all new features</h6>
-            <a href="/end.html">here</a>
             <video src="" id="video" style="width: 400px; height: 400px;" autoplay="autoplay"></video>
             <canvas id="preview" style="display: none"></canvas>
             <div id="logger"></div> 
@@ -29,18 +31,23 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
-        /*
-        https://github.com/DannySofftie/Messaging.git
-        */
         var video = $('#play');
 
-        document.getElementById('audio_calling').addEventListener('click', function () {
-            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+        // extract url parameters by name to be used to initiate call
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
 
-            // listen to an audio stream from the microphone
-            alert('Heey');
+        var $initiator_crypto = getParameterByName('initiator_crypto');
+        var $receiver_crypto = getParameterByName('receiver_crypto');
+        
+        // peer js will take control after having both keys here
 
-        });
         var canvas = document.getElementById('preview');
         var context = canvas.getContext('2d');
         canvas.width = 800;
@@ -69,7 +76,24 @@
             socket.emit('stream', canvas.toDataURL('video/webp'));
         }
 
-        $(function () {
+
+        $('#audio_call').click(function () {
+            // handle audio calling
+            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+
+            if (navigator.getUserMedia) {
+                navigator.getUserMedia({ video: false, audio: true }, loadCamera, loadFailed);
+
+            }
+
+            setInterval(function () {
+                viewVideo(video, context)
+            }, 3000);
+           
+        });
+
+        $('#video_call').click(function () {
+            // handle video calling
             navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
             if (navigator.getUserMedia) {
@@ -80,7 +104,12 @@
             setInterval(function () {
                 viewVideo(video, context)
             }, 3000);
+        });
+
+        $('#close_window').click(function () {
+            window.close();
         })
+        
     </script>
 </body>
 </html>

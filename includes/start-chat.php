@@ -21,6 +21,7 @@ $userid = $_SESSION['userid'];
         font-family: "Roboto", sans-serif;
     }
 
+
     .menu_content {
         height: 8%;
         box-shadow: 1px 2px 15px 3px rgba(0,0,0,0.1);
@@ -227,17 +228,12 @@ catch(PDOException $e){
 
         // make request to NodeJs for call initiation
         $('#request_call').click(function () {
-            $.ajax({
-                url: 'http://localhost:8080',
-                method: 'GET',
-                success: function (responseFile) {
-                    // place the received file in chat window
-                    $('.content_holder').html(responseFile);
-                },
-                error: function (xhr, status, error) {
-                    console.log("XHR " + xhr + " status " + status + " error message " + error)
-                }
-            });
+
+            // will take these keys from database
+            var $initiator_key = 's76hchjghye7y8u9yuchb7eyry78c';
+            var $receiver_key = '8c7y8ryu8u8cbuyey7684bync8e8bc';
+            var $url = 'http://localhost:7880/initiate?initiator_crypto=' + $initiator_key + '&receiver_crypto=' + $receiver_key;
+            window.open($url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=45,left=200,width=800,height=600");
         });
         // end
 

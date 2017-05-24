@@ -220,18 +220,21 @@ require_once 'dbconfig.php';
 
         // call function by default
         load_more_content($track_page);
+
         $('#load_more_feeds').click(function (e) {
-            $(event.target).closest('span').addClass('mdi-spin');
+            // $(event.target).closest('span').addClass('mdi-spin');
             $track_page++;
             load_more_content($track_page);
         });
+
         function load_more_content(page_number) {
             $.post('../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': page_number }, function (data) {
                 if (data.trim().length == 0) {
                     $('#load_more_feeds').text("You have reached the end of the current feeds").prop('disabled', true);
+                } else {
+                    $('.post_preloader').hide();
+                    $('.load_posts').append(data);
                 }
-                $('.post_preloader').hide();
-                $('.load_posts').append(data);
             });
         }
 

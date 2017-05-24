@@ -12,12 +12,17 @@ app.use(express.static(__dirname + '/js'));
 app.use(express.static(__dirname + '/files'));
 
 // return call options upon request by client
-app.get('/', function (request, response) {
+app.get('/initiate?', function (request, response) {
+    var intiator_key = request.query.initiator_crypto;
+    var receiver_key = request.query.receiver_crypto;
+
+    console.log(intiator_key + " " + receiver_key);
     response.sendFile(__dirname + '/index.html');
 });
 
 // listen to specified port
-http.listen(8080, function () {
-    log.info('Call server started');
+var port = 7880;
+http.listen(port, function () {
+    log.info('Call server started port ' + port);
 });
 
