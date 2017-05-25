@@ -17,6 +17,10 @@
             <button class="btn btn-success" id="audio_call">Audio call <span class="mdi mdi-microphone-settings"></span></button>
             <button class="btn btn-warning" id="video_call">Video call <span class="mdi mdi-video"></span></button>
         </div>
+        <div>
+            <span id="my_id">My id here</span><br />
+            <span id="other_id"></span>
+        </div>
         <div class="text-center">
             <video src="" id="video" style="width: 400px; height: 400px;" autoplay="autoplay"></video>
             <canvas id="preview" style="display: none"></canvas>
@@ -29,10 +33,11 @@
     <script src="/bootstrap.js"></script>
     <script src="/smooth-scroll.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/peer.js" ></script>
 
     <script>
         var video = $('#play');
-
+      
         // extract url parameters by name to be used to initiate call
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
@@ -46,7 +51,13 @@
         var $initiator_crypto = getParameterByName('initiator_crypto');
         var $receiver_crypto = getParameterByName('receiver_crypto');
         
+        // create a peer and pass id of the receiver
+        var peer = new Peer({host : 'localhost' , port : 7880, path : '/'});  
         // peer js will take control after having both keys here
+
+        peer.on('open', function () {
+            $('#my_id').text(peer.id);
+        });
 
         var canvas = document.getElementById('preview');
         var context = canvas.getContext('2d');

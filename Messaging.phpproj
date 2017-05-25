@@ -321,6 +321,7 @@
   <ItemGroup>
     <Content Include=".htaccess" />
     <Content Include="includes\call_handler\assets\materialdesignicons.css" />
+    <Content Include="includes\call_handler\files\error.html" />
     <Content Include="includes\call_handler\fonts\fontawesome-webfont.eot" />
     <Content Include="includes\call_handler\fonts\fontawesome-webfont.svg" />
     <Content Include="includes\call_handler\fonts\fontawesome-webfont.ttf" />
@@ -353,5 +354,6 @@
     <Content Include="includes\call_handler\fonts\roboto\Roboto-Thin.ttf" />
     <Content Include="includes\call_handler\fonts\roboto\Roboto-Thin.woff" />
     <Content Include="includes\call_handler\fonts\roboto\Roboto-Thin.woff2" />
+    <Content Include="includes\call_handler\js\peer.js" />
   </ItemGroup>
 </Project>

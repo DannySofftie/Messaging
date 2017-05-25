@@ -9,12 +9,16 @@ $friend_id = intval($_GET['friend_id']);
 
 $userid = $_SESSION['userid'];
 
+// update public ip address every time start chat is initialised
+$ip = !empty($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] : (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+echo  $ip;
 
-
-?><!-- 
-<link type="text/css" href="../css/bootstrap.css" rel="stylesheet" media="screen, projection" />
-<link type="text/css" href="../css/materialdesignicons.css" rel="stylesheet" media="screen, projection" />
-<link type="text/css" href="../css/custom-style.css" rel="stylesheet" media="screen, projection" /> -->
+?>
+<!-- 
+    <link type="text/css" href="../css/bootstrap.css" rel="stylesheet" media="screen, projection" />
+    <link type="text/css" href="../css/materialdesignicons.css" rel="stylesheet" media="screen, projection" />
+    <link type="text/css" href="../css/custom-style.css" rel="stylesheet" media="screen, projection" /> 
+-->
 <style type="text/css" media="screen">
     body {
         /*background-color: #edeff2;*/
@@ -223,7 +227,6 @@ catch(PDOException $e){
                     $('#message_content').val("");
                 }
             })
-
         });
 
         // make request to NodeJs for call initiation
@@ -232,12 +235,11 @@ catch(PDOException $e){
             // will take these keys from database
             var $initiator_key = 's76hchjghye7y8u9yuchb7eyry78c';
             var $receiver_key = '8c7y8ryu8u8cbuyey7684bync8e8bc';
-            var $url = 'http://localhost:7880/initiate?initiator_crypto=' + $initiator_key + '&receiver_crypto=' + $receiver_key;
+
+            var $url = 'http://169.254.116.14:7880/initiate?initiator_crypto=' + $initiator_key + '&receiver_crypto=' + $receiver_key;
             window.open($url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=45,left=200,width=800,height=600");
         });
         // end
-
-        
     })
 </script>
 

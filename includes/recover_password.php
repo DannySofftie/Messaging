@@ -13,7 +13,6 @@ if($checkQuery->rowCount() == 0){
 <?php
 }else{
 ?>
-<span class="alert alert-success" id="confirmText">Confirm password recovery.</span> 
 <?php
 
     $newPass = openssl_random_pseudo_bytes( 3 , $cstrong);
