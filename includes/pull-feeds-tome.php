@@ -1,4 +1,3 @@
-
 <style>
     .preloader_holder {
         position: absolute;

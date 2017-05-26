@@ -2,10 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Call Options</title>
-    <link type="text/css" href="/custom_style.css" rel="stylesheet" />
-    <link type="text/css" href="/bootstrap.css" rel="stylesheet" />
-    <link type="text/css" href="/animate.css" rel="stylesheet" />
-    <link type="text/css" href="/materialdesignicons.css" rel="stylesheet" />
+    <link type="text/css" href="./assets/bootstrap.css" rel="stylesheet" />
+    <link type="text/css" href="./assets/animate.css" rel="stylesheet" />
+    <link type="text/css" href="./assets/materialdesignicons.css" rel="stylesheet" />
 </head>
 <body>
     <div class="bg-faded">
@@ -18,111 +17,103 @@
             <button class="btn btn-warning" id="video_call">Video call <span class="mdi mdi-video"></span></button>
         </div>
         <div>
-            <span id="my_id">My id here</span><br />
-            <span id="other_id"></span>
+            <span id="my_id"></span><br />
+            <audio id="audio_holder" controls autoplay="autoplay" style="display: none"></audio>
+            <span id="other_id">The other id</span>
         </div>
         <div class="text-center">
-            <video src="" id="video" style="width: 400px; height: 400px;" autoplay="autoplay"></video>
+            <video id="video_holder" style="width: 400px; height: 400px;" autoplay="autoplay"></video>
             <canvas id="preview" style="display: none"></canvas>
-            <div id="logger"></div> 
+            <div id="logger">Logger body</div>
         </div>
     </div>
 
     <!-- SCRIPTS -->
-    <script src="/jquery-3.1.1.js"></script>
-    <script src="/bootstrap.js"></script>
-    <script src="/smooth-scroll.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/peer.js" ></script>
-
+    <script src="js/jquery-3.1.1.js"></script>
+    <script src="js/tether.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/smooth-scroll.js"></script>
+    <script src="js/peer.js"></script>
     <script>
-        var video = $('#play');
-      
-        // extract url parameters by name to be used to initiate call
-        function getParameterByName(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        }
+        (function () {
 
-        var $initiator_crypto = getParameterByName('initiator_crypto');
-        var $receiver_crypto = getParameterByName('receiver_crypto');
-        
-        // create a peer and pass id of the receiver
-        var peer = new Peer({host : 'localhost' , port : 7880, path : '/'});  
-        // peer js will take control after having both keys here
+            // make ajax to request user a random generated key
+            $.ajax({
+                url: '/requestUserData',
+                method: 'GET',
+                success: function (data) {
+                    $('#my_id').html(data)
+                },
+                error: function (err) {
+                    alert("An error occured")
+                }
+            })
 
-        peer.on('open', function () {
-            $('#my_id').text(peer.id);
-        });
+            var peer = new Peer({ host: 'localhost', port: 7880, path: '/initiate' });
 
-        var canvas = document.getElementById('preview');
-        var context = canvas.getContext('2d');
-        canvas.width = 800;
-        canvas.height = 600;
-        context.width = canvas.width;
-        context.height = canvas.height;
-
-        var video = document.getElementById('video');
-        var socket = io();
-
-        function logger(message) {
-            $('#logger').text(message);
-        }
-
-        function loadCamera(stream) {
-            logger('Camera connection [OK]');
-            video.src = window.URL.createObjectURL(stream);
-        }
-
-        function loadFailed() {
-            logger('Your camera is not probably connected');
-        }
-
-        function viewVideo(video, context) {
-            context.drawImage(video, 0, 0, context.width, context.height);
-            socket.emit('stream', canvas.toDataURL('video/webp'));
-        }
-
-
-        $('#audio_call').click(function () {
-            // handle audio calling
-            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
-
-            if (navigator.getUserMedia) {
-                navigator.getUserMedia({ video: false, audio: true }, loadCamera, loadFailed);
-
-            }
-
-            setInterval(function () {
-                viewVideo(video, context)
-            }, 3000);
            
-        });
+            var vendorURL = window.URL || window.webkitURL
 
-        $('#video_call').click(function () {
-            // handle video calling
-            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+            navigator.getMedia = navigator.getUserMedia ||
+                                       navigator.webkitGetUserMedia ||
+                                       navigator.mozGetUserMedia ||
+                                       navigator.msGetUserMedia;
 
-            if (navigator.getUserMedia) {
-                navigator.getUserMedia({ video: true, audio: true }, loadCamera, loadFailed);
+            //capture video
+            $('#video_call').click(function () {
+                if (navigator.getMedia) {
+                    navigator.getMedia({
+                        video: true,
+                        audio: true
+                    }, function (stream) {
+                        // send this data stream to the other connected peer
+                        var call = peer.call('other-peers-id', stream)
 
-            }
+                        call.on('stream', function (remoteStream) {
 
-            setInterval(function () {
-                viewVideo(video, context)
-            }, 3000);
-        });
+                            // show this on a video stream
+                            $('#video_holder').attr('src', vendorURL.createObjectURL(remoteStream))
+                            $('#video_holder').play()
+                            $('#logger').text('Camera and microphone [OK]')
 
-        $('#close_window').click(function () {
-            window.close();
-        })
-        
+                        })
+                    }, function (error) {
+                        $('#logger').text('An error occured. Check your camera')
+                    })
+                }
+            })
+
+            // capture audio
+            $('#audio_call').click(function () {
+                if (navigator.getMedia) {
+                    navigator.getMedia({
+                        video: false,
+                        audio: true
+                    }, function (stream) {
+                        // send this data stream to the other connected peer
+                        var call = peer.call('other-peers-id', stream)
+
+                        $('#logger').text('Microphone [OK]')
+                        call.on('stream', function (remoteStream) {
+
+                            // show this on a video stream
+                            $('#audio_holder').css('display', 'block')
+                            $('#audio_holder').attr('src', vendorURL.createObjectURL(remoteStream))
+                            $('#audio_holder').play();                          
+
+                        })
+                    }, function (error) {
+                        $('#logger').text('Error initialising your microphone')
+                    })
+                }
+            })
+
+
+            // close this window on close click
+            $('#close_window').click(function () {
+                window.close();
+            })
+        })();
     </script>
 </body>
 </html>
-
-

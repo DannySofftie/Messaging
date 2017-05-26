@@ -117,7 +117,7 @@ try{
         <?php
     if (!empty($frQueryRow['prof_image'])) {
         ?>
-        <img src=" <?php   echo $frQueryRow['prof_image']  ?>" class="header-image float-left" alt="" />
+        <img src="<?php echo $frQueryRow['prof_image']  ?>" class="header-image float-left" alt="" />
         <?php
     }else{
         ?>
@@ -197,7 +197,6 @@ catch(PDOException $e){
 <script type="text/javascript">
 
     $(function () {
-
         (function recentChat() {
             var $friend_id = $('#friend_id').text();
             var $userid = $('#userid').text();
@@ -212,7 +211,6 @@ catch(PDOException $e){
         $('#text-message').submit(function (event) {
             /* Act on the event */
             event.preventDefault();
-
             $.ajax({
                 url: '../includes/text-message-save.php',
                 method: 'GET',
@@ -232,12 +230,20 @@ catch(PDOException $e){
         // make request to NodeJs for call initiation
         $('#request_call').click(function () {
 
-            // will take these keys from database
-            var $initiator_key = 's76hchjghye7y8u9yuchb7eyry78c';
-            var $receiver_key = '8c7y8ryu8u8cbuyey7684bync8e8bc';
+            function randomString(length, chars) {
+                var result = '';
+                for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+                return result;
+            }
+            // will take these keys from function above
+            var $initiator_key = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            var $receiver_key = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
-            var $url = 'http://169.254.116.14:7880/initiate?initiator_crypto=' + $initiator_key + '&receiver_crypto=' + $receiver_key;
-            window.open($url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=45,left=200,width=800,height=600");
+            var $friend_id = $('#friend_id').text().trim();
+            var $userid = $('#userid').text().trim();
+
+            var $url = 'http://localhost:7880/initiate?curr_userID=' + $userid + '&friend_id=' + $friend_id + '&initiator_crypto=' + $initiator_key + '&receiver_crypto=' + $receiver_key;
+            window.open($url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=35,left=150,width=900,height=640");
         });
         // end
     })
