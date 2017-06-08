@@ -36,6 +36,8 @@
     <Compile Include="public\js\tether.js" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="jsonfiles\" />
+    <Folder Include="views\" />
     <Folder Include="public" />
     <Folder Include="public\assets" />
     <Folder Include="public\files" />

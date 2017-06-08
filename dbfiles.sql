@@ -139,13 +139,17 @@ create table if not exists call_handler(
     primary key(call_id),
     constraint fk_init_id foreign key(initiator_id) references regusers(id) on delete cascade
 );
+alter table call_handler alter column call_status set default 0;
 
 -- create table post_u_reactions
+-- drop table post_u_reactions;
 create table if not exists post_u_reactions(
 	user_iden int,
     post_iden int,
-    constraint fk_user_iden foreign key(user_iden) references regusers(id),
-    constraint fk_post_iden foreign key(post_iden) references post_feeds(post_id)
+    upvotes int,
+    downvotes int,
+    constraint fk_user_iden foreign key(user_iden) references regusers(id) on delete cascade,
+    constraint fk_post_iden foreign key(post_iden) references post_feeds(post_id) on delete cascade
 );
 
 

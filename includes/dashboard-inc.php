@@ -202,119 +202,119 @@ require_once 'dbconfig.php';
 </div>
 
 <script type="text/javascript">
-    $(function () {
-        $('#discard').click(function (event) {
+    $( function () {
+        $( '#discard' ).click( function ( event ) {
             /* Act on the event */
-            $('#business_post').val("").focus();
-            $('#business_post').attr('placeholder', 'Type what you are up to.......');
-        });
+            $( '#business_post' ).val( "" ).focus();
+            $( '#business_post' ).attr( 'placeholder', 'Type what you are up to.......' );
+        } );
 
-        $('#image_selector').click(function (event) {
+        $( '#image_selector' ).click( function ( event ) {
             /* Act on the event */
-            $('#post_image').click();
-        });
+            $( '#post_image' ).click();
+        } );
 
 
         // LOAD MORE FEEDS TO CURRENT PAGE
         var $track_page = 1;
 
         // call function by default
-        load_more_content($track_page);
+        load_more_content( $track_page );
 
-        $('#load_more_feeds').click(function (e) {
+        $( '#load_more_feeds' ).click( function ( e ) {
             // $(event.target).closest('span').addClass('mdi-spin');
             $track_page++;
-            load_more_content($track_page);
-        });
+            load_more_content( $track_page );
+        } );
 
-        function load_more_content(page_number) {
-            $.post('../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': page_number }, function (data) {
-                if (data.trim().length == 0) {
-                    $('#load_more_feeds').text("You have reached the end of the current feeds").prop('disabled', true);
+        function load_more_content( page_number ) {
+            $.post( '../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': page_number }, function ( data ) {
+                if ( data.trim().length == 0 ) {
+                    $( '#load_more_feeds' ).text( "You have reached the end of the current feeds" ).prop( 'disabled', true );
                 } else {
-                    $('.post_preloader').hide();
-                    $('.load_posts').append(data);
+                    $( '.post_preloader' ).hide();
+                    $( '.load_posts' ).append( data );
                 }
-            });
+            } );
         }
 
         // function to check news feed for new updates
-        /*
+        
         (function updateFeed() {
-            $.get('../includes/pull-feeds-tome.php?fetchNew=true', function (data) {
+            $.post( '../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': $track_page } , function ( data ) {
 
                 $('.load_posts').html(data);
-                setTimeout(updateFeed, 15000);
+                setTimeout(updateFeed, 5000);
             });
         })();
-        */
-        $('#post_post').click(function (event) {
+       
+        $( '#post_post' ).click( function ( event ) {
             /* Act on the event */
-            var $postToPost = $('#business_post').val().trim();
-            $('#post_result').html($('.preloader_content').html());
-            if ($postToPost == '') {
-                $('.business_post_cont').addClass('has-danger');
-                $('#business_post').addClass('form-control-danger');
-                $('#business_post').focus();
-                $('#business_post').attr('placeholder', 'Your post is empty');
+            var $postToPost = $( '#business_post' ).val().trim();
+            $( '#post_result' ).html( $( '.preloader_content' ).html() );
+            if ( $postToPost == '' ) {
+                $( '.business_post_cont' ).addClass( 'has-danger' );
+                $( '#business_post' ).addClass( 'form-control-danger' );
+                $( '#business_post' ).focus();
+                $( '#business_post' ).attr( 'placeholder', 'Your post is empty' );
             } else {
-                $('.business_post_cont').removeClass('has-danger');
-                $.ajax({
+                $( '.business_post_cont' ).removeClass( 'has-danger' );
+                $.ajax( {
                     url: '../includes/pull-feeds-tome.php?postContent=' + $postToPost,
                     method: 'POST',
-                    data: new FormData($('.allFormData')[1]),
+                    data: new FormData( $( '.allFormData' )[1] ),
                     async: false,
-                    success: function (resultText) {
+                    success: function ( resultText ) {
                         // execute after success
 
                         // reset input of type file to blank
-                        $('.allFormData')[1].reset();
+                        $( '.allFormData' )[1].reset();
 
                         // reset text area to blank
-                        $('#business_post').val('');
+                        $( '#business_post' ).val( '' );
 
-                        $('.image_display').slideUp();
-                        $('#business_post').focus();
-                        $('#business_post').attr('placeholder', 'Post a new post, you can also add images........');
-                        $('#post_result').fadeIn('slow', function () {
-                            $(this).slideUp(5000);
-                            $('#post_result').html(resultText);
-                        });
-                        $.get('../includes/pull-feeds-tome.php?fetchNew=true', function (data) {
+                        $( '.image_display' ).slideUp();
+                        $( '#business_post' ).focus();
+                        $( '#business_post' ).attr( 'placeholder', 'Post a new post, you can also add images........' );
+                        $( '#post_result' ).fadeIn( 'slow', function () {
+                            $( this ).slideUp( 5000 );
+                            $( '#post_result' ).html( resultText );
+                        } );
+                        $.post( '../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': page_number }, function ( data ) {
                             /*optional stuff to do after success */
-                            $('.load_posts').html(data);
-                        });
+                            $( '.load_posts' ).html( data );
+                        } );
                     },
                     error: function () {
-                        alert("Your post was not submitted.");
+                        alert( "Your post was not submitted." );
                     },
                     cache: false,
                     contentType: false,
                     processData: false
-                })
+                } )
             }
-        });
+        } );
 
         // function for image preview before upload
-        function readImageURL(input) {
-            if (input.files && input.files[0]) {
+        function readImageURL( input ) {
+            if ( input.files && input.files[0] ) {
                 var reader = new FileReader();
-                reader.onload = function (e) {
+                reader.onload = function ( e ) {
                     /* Act on the event */
-                    $('#image_display').attr('src', e.target.result);
-                    $('.image_display').show();
+                    $( '#image_display' ).attr( 'src', e.target.result );
+                    $( '.image_display' ).show();
                 }
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL( input.files[0] );
             }
         }
-        $('#post_image').change(function (input) {
+        $( '#post_image' ).change( function ( input ) {
             /* Act on the event */
             // $('#select_image').hide();
-            $('.image_display').show();
-            readImageURL(this);
-        });
+            $( '.image_display' ).show();
+            readImageURL( this );
+        } );
 
         // the next function will go here
 
-    })
+    } )
 </script>

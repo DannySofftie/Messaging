@@ -5,29 +5,73 @@
     <link type="text/css" href="./assets/bootstrap.css" rel="stylesheet" />
     <link type="text/css" href="./assets/animate.css" rel="stylesheet" />
     <link type="text/css" href="./assets/materialdesignicons.css" rel="stylesheet" />
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        #video_holder {
+            width: 100%;
+            height: 75%;
+        }
+
+        #my_video_holder {
+            width: 300px;
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        #their_video_holder {
+            height: 100%;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+        }
+
+        #errors {
+            position: absolute;
+            bottom: 0;
+            color: tomato;
+            z-index: 9999;
+            width: 150px;
+            height: 70%;
+        }
+
+        #error1 {
+            /* background-color: rgba(0,0,0,0.2); */
+        }
+    </style>
 </head>
 <body>
-    <div class="bg-faded">
-        <div class="jumbotron text-center bg-info" style="padding: 30px 0;">
-            <div style="position: absolute; top: 2px; right: 2px;">
-                <button class="btn btn-sm btn-danger" id="close_window">Close</button>
+    <div class="jumbotron text-center bg-info" style="height: 25%">
+        <div style="position: absolute; top: 8px; right: 25px;">
+            <button class="btn btn-sm btn-danger" id="close_window">Close</button>
+        </div>
+        <h5>Confirm this video call. Audio routing has been disabled and will be added soon.</h5>
+        <button class="btn btn-primary" id="video_call">Place this call <span class="mdi mdi-video mdi-18px mdi-spin text-danger"></span></button>
+    </div>
+    <div id="video_holder">
+        <div class="bg-faded" id="their_video_holder">
+            <video id="their_video" autoplay="autoplay"></video>
+            <div id="errors" class="text-info">
+                <div id="error1">
+                    <div id="time_started">
+                        <marquee>Video information</marquee> All information about this video call, including call status will be displayed on this section
+                    </div>
+                    <div id="error_list" class="text-danger">
+
+                    </div>
+                </div>
             </div>
-            <h5>Choose how to call your friend.</h5>
-            <button class="btn btn-success" id="audio_call">Audio call <span class="mdi mdi-microphone-settings"></span></button>
-            <button class="btn btn-warning" id="video_call">Video call <span class="mdi mdi-video"></span></button>
-        </div>
-        <div>
-            <span id="my_id"></span><br />
-            <audio id="audio_holder" controls autoplay="autoplay" style="display: none"></audio>
-            <span id="other_id">The other id</span>
-        </div>
-        <div class="text-center">
-            <video id="video_holder" style="width: 400px; height: 400px;" autoplay="autoplay"></video>
-            <canvas id="preview" style="display: none"></canvas>
-            <div id="logger">Logger body</div>
+            <div class="bg-success" id="my_video_holder">
+                <video id="my_video" muted autoplay="autoplay"></video>
+            </div>
         </div>
     </div>
-
     <!-- SCRIPTS -->
     <script src="js/jquery-3.1.1.js"></script>
     <script src="js/tether.js"></script>
@@ -35,85 +79,135 @@
     <script src="js/smooth-scroll.js"></script>
     <script src="js/peer.js"></script>
     <script>
-        (function () {
-
+        ( function () {
             // make ajax to request user a random generated key
-            $.ajax({
-                url: '/requestUserData',
-                method: 'GET',
-                success: function (data) {
-                    $('#my_id').html(data)
-                },
-                error: function (err) {
-                    alert("An error occured")
-                }
-            })
+            // get the url parameters to create a peer constructor
+            function getParameterByName( name, url ) {
+                if ( !url ) url = window.location.href;
+                name = name.replace( /[\[\]]/g, "\\$&" );
+                var regex = new RegExp( "[?&]" + name + "(=([^&#]*)|&|#|$)" ), results = regex.exec( url );
+                if ( !results ) return null;
+                if ( !results[2] ) return '';
+                return decodeURIComponent( results[2].replace( /\+/g, " " ) );
+            }
 
-            var peer = new Peer({ host: 'localhost', port: 7880, path: '/initiate' });
+            var $initiator_id = getParameterByName( 'initiator_crypto' );
+            var $receiver_id = getParameterByName( 'receiver_crypto' );
 
-           
+            var peer = new Peer( $initiator_id,
+                {
+                    host: 'evening-shore-56066.herokuapp.com',
+                    path: '/peerjs',
+                    secure: true,
+                    port: 443,
+                    debug: 3,
+                    config: {
+                        'iceServers': [{
+                            url: 'stun:stun1.l.google.com:19302'
+                        },
+                        {
+                            url: 'turn:numb.viagenie.ca',
+                            credential: 'muazkh', username: 'webrtc@live.com'
+                        }]
+                    }
+                })
+
+            peer.on( 'open', function ( id ) {
+                // make an AJAX request and store this id for use by other peer to connect
+                console.log( "My peer id is " + id )
+            } )
+
+            peer.on( 'error', function ( err ) {
+                // alert with the message
+                $( '#error_list' ).text( err.message );
+            } );
+
+            navigator.getMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
             var vendorURL = window.URL || window.webkitURL
 
-            navigator.getMedia = navigator.getUserMedia ||
-                                       navigator.webkitGetUserMedia ||
-                                       navigator.mozGetUserMedia ||
-                                       navigator.msGetUserMedia;
+            peer.on( 'connection', function ( err, connection ) {
+                if(err) console.log("An error occured " + err)
+                console.log('Connected to  ' + peer.id)
+            } )
+            // called by default
+            navigator.getMedia
+                (
+                {
+                    video: true, audio: true
+                },
+                function ( stream ) {
+                    $( '#my_video' ).prop( 'src', vendorURL.createObjectURL( stream ) )
+                   // $( '#their_video' ).prop( 'src', vendorURL.createObjectURL( stream ) )
+                }, function ( err ) {
+                    alert( "Allow access to microphone and camera" )
+                } )
 
-            //capture video
-            $('#video_call').click(function () {
-                if (navigator.getMedia) {
-                    navigator.getMedia({
-                        video: true,
-                        audio: true
-                    }, function (stream) {
-                        // send this data stream to the other connected peer
-                        var call = peer.call('other-peers-id', stream)
+            // obtain stream data
+            function getMediaData( successCallback, errorCallback ) {
+                navigator.getMedia( {
+                    audio: true,
+                    video: true
+                }, successCallback, errorCallback )
+            }
 
-                        call.on('stream', function (remoteStream) {
+            // function to handle calls(receiving and sending data stream)
+            function onReceiveCall( call ) {
+                console.log( "Peer is calling........" )
+                console.log( call )
 
-                            // show this on a video stream
-                            $('#video_holder').attr('src', vendorURL.createObjectURL(remoteStream))
-                            $('#video_holder').play()
-                            $('#logger').text('Camera and microphone [OK]')
+                getMediaData(
+                    function ( MediaStream ) {
+                        call.answer( MediaStream )
+                        console.log( "Answering call........" )
+                    },
+                    function ( err ) {
+                        console.log( "An error occured while acquiring the stream data" )
+                        console.log( err )
+                    } )
 
-                        })
-                    }, function (error) {
-                        $('#logger').text('An error occured. Check your camera')
-                    })
-                }
-            })
+                call.on( 'stream', onReceiveStream )
+            }
 
-            // capture audio
-            $('#audio_call').click(function () {
-                if (navigator.getMedia) {
-                    navigator.getMedia({
-                        video: false,
-                        audio: true
-                    }, function (stream) {
-                        // send this data stream to the other connected peer
-                        var call = peer.call('other-peers-id', stream)
+            // handle media from a remote peer
+            function onReceiveStream( stream ) {
+                var video = $( '#their_video' )
+                video.prop( 'src', vendorURL.createObjectURL( stream ) )
+            }
 
-                        $('#logger').text('Microphone [OK]')
-                        call.on('stream', function (remoteStream) {
+            // listen for any incoming calls
+            peer.on( 'call', onReceiveCall )
 
-                            // show this on a video stream
-                            $('#audio_holder').css('display', 'block')
-                            $('#audio_holder').attr('src', vendorURL.createObjectURL(remoteStream))
-                            $('#audio_holder').play();                          
+            // handle the call event
+            $( '#video_call' ).click( function () {
+                console.log( 'Starting call to ' + $receiver_id )
 
-                        })
-                    }, function (error) {
-                        $('#logger').text('Error initialising your microphone')
-                    })
-                }
-            })
+                getMediaData(
+                    function ( MediaStream ) {
+                        $( '#my_video' ).prop( 'src', vendorURL.createObjectURL( MediaStream ) )
+
+                        console.log( "Now calling " + $receiver_id )
+                        var call = peer.call( $receiver_id, MediaStream )
+                        call.on( 'stream', onReceiveStream )
+                    },
+                    function ( err ) {
+                        console.log( "An error occured when getting the media data stream" )
+                        console.log( err )
+                    }
+                    )
+            } )
+
+            // terminate connection when not in use
+            peer.on( 'close', function () {
+                peer.close()
+                peer = null  // consider editing
+            } )
 
 
             // close this window on close click
-            $('#close_window').click(function () {
+            $( '#close_window' ).click( function () {
                 window.close();
-            })
-        })();
+            } )
+        } )();
     </script>
 </body>
 </html>

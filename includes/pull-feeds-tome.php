@@ -1,8 +1,21 @@
+
 <style>
     .preloader_holder {
         position: absolute;
         left: 45%;
         margin: 10px;
+    }
+    #informational_text{
+        height: 70px;
+        width: 100%;
+        position: fixed;
+        top: 40%;
+        left: 36%;
+        z-index: 9999;
+        display: none
+    }
+    #informational_text span{
+        box-shadow: 1px 0px 10px 2px rgba(0,0,0,0.4)
     }
 </style>
 
@@ -66,38 +79,77 @@ if (isset($_GET['postContent'])) {
 <span class="alert alert-danger">Failed to post your post!</span>
 <?php
 		}
-
 	}
-
-
 }
 /*
 
 FETCH ALL THE POSTS WHEN SUCCESSFUL POST OCCURS FOR EVERY NEW POST
 
  */
-
-if (isset($_GET['fetchNew'])) {
+if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
 
 ?>
 <div class="all_posts_holder">
     <?php
 	// fetch new posts
-	$currUserId = array($userid);
-	$connectedUsers = array();
-	$allUsers = array();
     $page_number = filter_var($_POST['page_number'] , FILTER_SANITIZE_NUMBER_INT ,FILTER_FLAG_STRIP_HIGH);
-    $item_per_page = filter_var(8 , FILTER_SANITIZE_NUMBER_INT , FILTER_FLAG_STRIP_HIGH);
+    $item_per_page = filter_var(16 , FILTER_SANITIZE_NUMBER_INT , FILTER_FLAG_STRIP_HIGH);
     $position = (($page_number - 1) * $item_per_page);
 
-	// current date and time
-	$date_a = new DateTime('now');
+    // function to convert time to appropriate filter
+    function filterTime($date_b){
 
+        // current date and time
+        $date_a = new DateTime('now');
+        $date_b = new DateTime($date_b);
+        $interval = date_diff($date_a,$date_b);
+
+        $correctTime = '';
+
+        if ($interval->format('%m') < 1 && $interval->format('%d') < 1 && $interval->format('%h') < 1 && $interval->format('%i') < 1) {
+            $correctTime = $interval->format('%s secs ago');
+        }
+        if ($interval->format('%m') < 1 && $interval->format('%d') < 1 && $interval->format('%h') < 1) {
+            if ($interval->format('%i') < 1 && $interval->format('%s') >= 0) {
+                $correctTime = $interval->format('%s secs ago');
+            }
+            elseif ($interval->format('%i') == 1) {
+                $correctTime = $interval->format('%i min ago');
+            }else{
+                $correctTime = $interval->format('%i mins ago');
+            }
+        }
+        if ($interval->format('%m') < 1 && $interval->format('%d') < 1 && $interval->format('%h') > 0) {
+            $correctTime = $interval->format('%h hours %i mins ago');
+        }
+        if ($interval->format('%m') < 1 && $interval->format('%d') >= 1) {
+            if ($interval->format('%d') == 1) {
+                $correctTime = $interval->format('Yesterday at %h:%i hrs');
+            }else{
+                $correctTime = $interval->format('%d days ago');
+            }
+        }
+        if ($interval->format('%m') >= 1) {
+            $correctTime = $interval->format('%m months ago');
+        }
+
+        return $correctTime;
+    }
+
+    // function to count upvotes and downvotes
+    function voteCount( $voteType , $postid ){
+        require 'dbconfig.php';
+        $voteType = intval($voteType);
+        $reactionsQuery = $conn->prepare("select * from post_u_reactions where post_iden = :postid and reaction = :vote");
+        $reactionsQuery->bindParam(":vote" , $voteType);
+        $reactionsQuery->bindParam(":postid" , $postid);
+        $reactionsQuery->execute();
+        return $reactionsQuery->rowCount();
+    }
 
 	try{
 
 		$postsByUsers = array();
-		$currUserArray = array($userid);
 		$connectedUsersIds = array();
 
 		// all posts with the 'poster(s)' data defined by user_id
@@ -117,82 +169,59 @@ if (isset($_GET['fetchNew'])) {
 		}
 
 		// merge arrays to include current user id and their posts
-		$requiredPostsByUserId = array_merge($connectedUsersIds, $currUserId);
+	     array_push($connectedUsersIds , $userid);
 
-		// shuffle order of id's in the array
-		shuffle($requiredPostsByUserId);
-
-		foreach ($requiredPostsByUserId as $value) {
+         foreach ($connectedUsersIds as $value) {
 
 			// SELECT * from post_feeds where user_id = :value order by post_time desc
 			$postFetchQuery = $conn->prepare("SELECT * from(SELECT regusers.prof_image, regusers.fname, regusers.nickname,post_feeds.post_id,post_feeds.user_id, post_feeds.post_text, post_feeds.post_time, post_feeds.post_image from regusers right join post_feeds on regusers.id = post_feeds.user_id order by post_feeds.post_time desc limit $position,$item_per_page) as t where user_id = :value order by post_time desc");
 			$postFetchQuery->bindParam(":value" , $value);
 			$postFetchQuery->execute();
+            while($postFetchQueryRow = $postFetchQuery->fetch()){
+                // json data from feeds
+                $outputData = new stdClass();
+                $outputData -> text = $postFetchQueryRow['post_text'];
+                $outputData -> time = filterTime($postFetchQueryRow['post_time']);
+                $outputData -> image = $postFetchQueryRow['post_image'];
+                $outputData -> postid = $postFetchQueryRow['post_id'];
+                $outputData -> username = $postFetchQueryRow['fname'] . " " . $postFetchQueryRow['nickname'];
+                $outputData -> userimage = $postFetchQueryRow['prof_image'];
+                // add upvotes count
+                $outputData -> upvotes = voteCount(1 , $outputData->postid) ;
+                $outputData -> downvotes = voteCount(0 , $outputData->postid);
 
-			while ($postFetchQueryRow = $postFetchQuery->fetch()) {
-
-				$date_b = new DateTime($postFetchQueryRow['post_time']);
-
-				$interval = date_diff($date_a,$date_b);
-
-				$correctTime = '';
-
-				if ($interval->format('%m') < 1 && $interval->format('%d') < 1 && $interval->format('%h') < 1 && $interval->format('%i') < 1) {
-					$correctTime = $interval->format('%s secs ago');
-				}
-				if ($interval->format('%m') < 1 && $interval->format('%d') < 1 && $interval->format('%h') < 1) {
-					if ($interval->format('%i') < 1 && $interval->format('%s') >= 0) {
-						$correctTime = $interval->format('%s secs ago');
-					}
-					elseif ($interval->format('%i') == 1) {
-						$correctTime = $interval->format('%i min ago');
-					}else{
-						$correctTime = $interval->format('%i mins ago');
-					}
-				}
-				if ($interval->format('%m') < 1 && $interval->format('%d') < 1 && $interval->format('%h') > 0) {
-					$correctTime = $interval->format('%h hours %i mins ago');
-				}
-				if ($interval->format('%m') < 1 && $interval->format('%d') >= 1) {
-					if ($interval->format('%d') == 1) {
-						$correctTime = $interval->format('Yesterday at %h:%i hrs');
-					}else{
-						$correctTime = $interval->format('%d days ago');
-					}
-				}
-				if ($interval->format('%m') >= 1) {
-					$correctTime = $interval->format('%m months ago');
-				}
-
-		    	// DISPLAY ALL POSTS FROM CONNECTED USERS, INCLUDING CURRENT USER'S POST when there is no image
-				if (empty($postFetchQueryRow['post_image'])) {
-
-
+                if(empty($outputData->image)){
     ?>
     <div class="card  card-outline-warning postview">
         <div class="card-block">
             <h5 class="card-title text-info">
                 <a href="">
-                    <?php echo $postFetchQueryRow['fname'] . " " . $postFetchQueryRow['nickname']   ?>
+                    <?php echo $outputData->username ?>
                 </a>
             </h5>
             <h6 class="card-subtitle mb-2 text-muted">
-                <?php echo $correctTime; ?>
+                <?php echo $outputData->time ?>
             </h6>
             <p class="card-text">
-                <?php  echo $postFetchQueryRow['post_text'];  ?>
+                <?php  echo $outputData->text ?>
             </p>
             <span style="font-size: 9px" id="upvote">
-                <span class="upvote" post_id=" <?php  echo $postFetchQueryRow['post_id'];  ?> ">
-                    Upvote
+                <span class="upvote" post_id="<?php  echo $outputData->postid;  ?>">
+                    Upvotes
+                    <strong style="color: cadetblue">
+                        <?php  echo $outputData->upvotes ?>
+                    </strong>
                     <span class="mdi mdi-heart"></span>
                 </span>&nbsp;
-                <span class="downvote" post_id=" <?php  echo $postFetchQueryRow['post_id'];  ?> ">
+                <span class="downvote" post_id="<?php  echo $outputData->postid;  ?>">
                     Downvote
+                    <strong style="color: red">
+                        <?php  echo $outputData->downvotes ?>
+                    </strong>
                     <span class="mdi mdi-bomb-off"></span>
                 </span>
             </span>
-            <span class="share_options float-right" post_id=" <?php echo $postFetchQueryRow['post_id'];  ?> ">
+            <span class="share_options float-right" post_id="<?php echo $outputData->postid; ?>">
                 <span class="social_share social_hide">
                     <span class="instagram_share btn btn-sm btn-outline-danger mdi mdi-instagram"></span>
                     <span class="twitter_share btn btn-sm btn-outline-info mdi mdi-twitter"></span>
@@ -205,41 +234,43 @@ if (isset($_GET['fetchNew'])) {
         </div>
     </div>
     <?php
-				}else {
-					// DISPLAY WITH THE IMAGE STYLED TO DISPLAY WELL
-					$imgPath = $postFetchQueryRow['post_image'];
-
+                }else{
+                    // feeds with image
     ?>
-
-    <div class="card postview">
-        <div class="card-img">
-            <img src="<?php  echo $imgPath  ?> " alt="post display image" />
-        </div>
+    <div class="card  card-outline-warning postview">
         <div class="card-block">
             <h5 class="card-title text-info">
-                <?php echo $postFetchQueryRow['fname'] . " " . $postFetchQueryRow['nickname']   ?>
+                <a href="">
+                    <?php echo $outputData->username ?>
+                </a>
             </h5>
+            <div class="">
+                <img src="<?php echo $outputData->image ?>" />
+            </div>
+            <div class="dropdown-divider"></div>
             <h6 class="card-subtitle mb-2 text-muted">
-                <?php echo $correctTime; ?>
+                <?php echo $outputData->time ?>
             </h6>
             <p class="card-text">
-                <?php  echo $postFetchQueryRow['post_text'];  ?>
+                <?php  echo $outputData->text ?>
             </p>
             <span style="font-size: 9px" id="upvote">
-                <span class="upvote" post_id=" <?php  echo $postFetchQueryRow['post_id'];  ?> ">
-                    Upvote
+                <span class="upvote" post_id="<?php  echo $outputData->postid;  ?>">
+                    Upvotes
+                    <strong style="color: cadetblue">
+                        <?php  echo $outputData->upvotes ?>
+                    </strong>
                     <span class="mdi mdi-heart"></span>
                 </span>&nbsp;
-                <span class="downvote" post_id=" <?php  echo $postFetchQueryRow['post_id'];  ?> ">
+                <span class="downvote" post_id="<?php  echo $outputData->postid;  ?>">
                     Downvote
+                    <strong style="color: red">
+                        <?php  echo $outputData->downvotes ?>
+                    </strong>
                     <span class="mdi mdi-bomb-off"></span>
-                </span>&nbsp;
-                <span class="recommend" post_id=" <?php  echo $postFetchQueryRow['post_id'];  ?> ">
-                    Recommend
-                    <span class="mdi mdi-record-rec"></span>
                 </span>
             </span>
-            <span class="share_options float-right" post_id=" <?php  echo $postFetchQueryRow['post_id'];  ?> ">
+            <span class="share_options float-right" post_id="<?php echo $outputData->postid; ?>">
                 <span class="social_share social_hide">
                     <span class="instagram_share btn btn-sm btn-outline-danger mdi mdi-instagram"></span>
                     <span class="twitter_share btn btn-sm btn-outline-info mdi mdi-twitter"></span>
@@ -252,10 +283,9 @@ if (isset($_GET['fetchNew'])) {
         </div>
     </div>
     <?php
-				}
-			}
-
-		}
+                }
+            }
+        }
 	}
     catch(PDOException $e){
 		echo "Error ".$e->getMessage();
@@ -264,108 +294,117 @@ if (isset($_GET['fetchNew'])) {
 }
     ?>
 </div>
-
+<div id="information_container">
+    <div id="informational_text">
+        
+    </div>
+</div>
 <script type="text/javascript">
-    $(function () {
+    $( function () {
         // social share
-        $('.share_options').hover(function () {
+        $( '.share_options' ).hover( function () {
             /* Stuff to do when the mouse enters the element */
-            var $social_sites = $(event.target).closest('.share_options').find('.social_share');
-            $social_sites.fadeIn(1000);
+            var $social_sites = $( event.target ).closest( '.share_options' ).find( '.social_share' );
+            $social_sites.fadeIn( 1000 );
         }, function () {
-            var $social_sites = $(event.target).closest('.share_options').find('.social_share');
-            $social_sites.fadeOut(100);
-        });
+            var $social_sites = $( event.target ).closest( '.share_options' ).find( '.social_share' );
+            $social_sites.fadeOut( 100 );
+        } );
 
-        $('.instagram_share').click(function (event) {
+        $( '.instagram_share' ).click( function ( event ) {
             /* Act on the event */
-            var $post_id = $(event.target).closest('.share_options').attr('post_id');
+            var $post_id = $( event.target ).closest( '.share_options' ).attr( 'post_id' );
 
-        });
-        $('.twitter_share').click(function (event) {
+        } );
+        $( '.twitter_share' ).click( function ( event ) {
             /* Act on the event */
-            var $post_id = $(event.target).closest('.share_options').attr('post_id');
+            var $post_id = $( event.target ).closest( '.share_options' ).attr( 'post_id' );
 
-        });
-        $('.facebook_share').click(function (event) {
+        } );
+        $( '.facebook_share' ).click( function ( event ) {
             /* Act on the event */
-            var $post_id = $(event.target).closest('.share_options').attr('post_id');
+            var $post_id = $( event.target ).closest( '.share_options' ).attr( 'post_id' );
 
-        });
+        } );
 
-        $('.postview').hover(function () {
+        $( '.postview' ).hover( function () {
             /* Stuff to do when the mouse enters the element */
-            $(this).addClass('bg-faded');
-            $(this).css('cursor', 'pointer');
+            $( this ).addClass( 'bg-faded' );
+            $( this ).css( 'cursor', 'pointer' );
         }, function () {
             /* Stuff to do when the mouse leaves the element */
-            $(this).removeClass('bg-faded');
-        });
+            $( this ).removeClass( 'bg-faded' );
+        } );
 
-        $('.upvote').hover(function () {
+        $( '.upvote' ).hover( function () {
             /* Stuff to do when the mouse enters the element */
-            $(this).addClass('text-info');
+            $( this ).addClass( 'text-info' );
         }, function () {
             /* Stuff to do when the mouse leaves the element */
-            $(this).removeClass('text-info');
-        });
+            $( this ).removeClass( 'text-info' );
+        } );
 
-        $('.downvote').hover(function () {
+        $( '.downvote' ).hover( function () {
             /* Stuff to do when the mouse enters the element */
-            $(this).addClass('text-danger');
+            $( this ).addClass( 'text-danger' );
         }, function () {
             /* Stuff to do when the mouse leaves the element */
-            $(this).removeClass('text-danger');
-        });
-        $('.recommend').hover(function () {
+            $( this ).removeClass( 'text-danger' );
+        } );
+        $( '.recommend' ).hover( function () {
             /* Stuff to do when the mouse enters the element */
-            $(this).addClass('text-success');
+            $( this ).addClass( 'text-success' );
         }, function () {
             /* Stuff to do when the mouse leaves the element */
-            $(this).removeClass('text-success ');
-        });
+            $( this ).removeClass( 'text-success ' );
+        } );
 
         // UPVOTING AND DOWNVOTING IMPLEMENTATION
-        $('.upvote').click(function (event) {
+        $( '.upvote' ).click( function ( event ) {
             /* Act on the event */
-            $(this).removeClass('text-info');
-            $.ajax({
-                url: '../includes/post-feeds-reactions.php?upvote=true' + '&post_id=' + $(this).attr('post_id'),
+            $( this ).removeClass( 'text-info' );
+            $.ajax( {
+                url: '../includes/post-feeds-reactions.php?upvote=true' + '&post_id=' + $( this ).attr( 'post_id' ),
                 method: 'GET',
                 async: false,
-                success: function () {
+                success: function (data) {
                     // change text color
-                    var $currClicked = $(event.target).closest('#upvote .upvote');
-                    $currClicked.attr('class', 'text-primary');
-                },
-                error: function () {
-                    alert('Upvote failed')
-                },
-                cache: false,
-                contentType: false,
-                processData: false
-            })
-        });
-        $('.downvote').click(function (event) {
-            /* Act on the event */
-            $(this).removeClass('text-danger');
-            $.ajax({
-                url: '../includes/post-feeds-reactions.php?downvote=true' + '&post_id=' + $(this).attr('post_id'),
-                method: 'GET',
-                async: false,
-                success: function () {
-                    // change text color
-                    var $currClicked = $(event.target).closest('#upvote .downvote');
-                    $currClicked.attr('class', 'text-warning');
-                },
-                error: function () {
-                    alert('Downvote failed')
-                },
-                cache: false,
-                contentType: false,
-                processData: false
-            })
-        });
+                    var $currClicked = $( event.target ).closest( '#upvote .upvote' );
+                    $currClicked.attr( 'class', 'text-primary' );
 
-    })
+                    $( '#informational_text' ).css( 'display', 'block' );
+                    $( '#informational_text' ).html(data)
+                },
+                error: function () {
+                    alert( 'Upvote failed' )
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            } )
+        } );
+        $( '.downvote' ).click( function ( event ) {
+            /* Act on the event */
+            $( this ).removeClass( 'text-danger' );
+            $.ajax( {
+                url: '../includes/post-feeds-reactions.php?downvote=true' + '&post_id=' + $( this ).attr( 'post_id' ),
+                method: 'GET',
+                async: false,
+                success: function (data) {
+                    // change text color
+                    var $currClicked = $( event.target ).closest( '#upvote .downvote' );
+                    $currClicked.attr( 'class', 'text-warning' );
+                    $( '#informational_text' ).css( 'display', 'block' );
+                    $( '#informational_text' ).html( data )
+                },
+                error: function () {
+                    alert( 'Downvote failed' )
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            } )
+        } );
+
+    } )
 </script>

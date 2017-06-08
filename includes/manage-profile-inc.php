@@ -507,6 +507,9 @@ if ($selected_option == 'manage_contacts'){
 
     ?>
 
+
+    <script src="../js/dataTables.min.js"></script>
+    <script src="../js/dataTables.bootstrap.js"></script>
 <script type="text/javascript">
 
 	$(function(){ 

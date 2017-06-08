@@ -207,6 +207,7 @@
     <Compile Include="includes\pull-feeds-tome.php" />
     <Compile Include="includes\recover_password.php" />
     <Compile Include="includes\register-client-inc.php" />
+    <Compile Include="includes\request_call_keys.php" />
     <Compile Include="includes\save-message.php" />
     <Compile Include="includes\sent-messages-fetch.php" />
     <Compile Include="includes\sign-in-inc.php" />

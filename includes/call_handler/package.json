@@ -11,5 +11,12 @@
     "audio"
   ],
   "author": "Danny Sofftie",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.3",
+    "express": "^4.15.3",
+    "log": "^1.4.0",
+    "mysql": "^2.13.0",
+    "peer": "^0.2.8"
+  }
 }

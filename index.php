@@ -3,7 +3,7 @@ session_start();
 require_once 'includes/dbconfig.php';
 if (isset($_SESSION['usermail'])) {
     // redirect to landing page
-    header("Location: content/feeds.php");
+    header("Location: content/feeds?/");
 }
 ?>
 <!DOCTYPE html>
@@ -466,7 +466,8 @@ if (isset($_SESSION['usermail'])) {
 
             $('#recoverEmail').click(function () {
                 $(this).keyup(function () {
-                    var $inputEmail = $(this).val().trim();
+                    var $inputEmail = $( this ).val().trim();
+                    
                     $.post('includes/recover_password.php?', $('.recover_passwordForm').serialize(), function (data) {
                         $('#recoverStatus').html(data);
                     });

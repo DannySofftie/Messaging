@@ -11,7 +11,7 @@ $userid = $_SESSION['userid'];
 
 // update public ip address every time start chat is initialised
 $ip = !empty($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] : (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
-echo  $ip;
+//echo  $ip;
 
 ?>
 <!-- 
@@ -192,60 +192,69 @@ catch(PDOException $e){
 
     ?>
 </div>
-<script src="../js/jquery-3.1.1.js"></script>
-<script src="../js/bootstrap.js"></script>
+
 <script type="text/javascript">
 
-    $(function () {
-        (function recentChat() {
-            var $friend_id = $('#friend_id').text();
-            var $userid = $('#userid').text();
-            $.get('../includes/specific-id-chats.php?friend_id=' + $friend_id + '&userid=' + $userid, function (data) {
+    $( function () {
+
+        // load required scripts;
+        $.getScript( '../js/jquery-3.1.1.js', function () {
+            console.log( '' )
+        } );
+
+        $.getScript( '../js/bootstrap.js', function () {
+            console.log( '' )
+        } );
+
+        ( function recentChat() {
+            var $friend_id = $( '#friend_id' ).text().trim();
+            var $userid = $( '#userid' ).text().trim();
+            $.get( '../includes/specific-id-chats.php?friend_id=' + $friend_id + '&userid=' + $userid, function ( data ) {
                 /*optional stuff to do after success */
-                $('.messages').html(data);
-                setTimeout(recentChat, 3000);
-            });
-        })();
+                $( '.messages' ).html( data );
+                setTimeout( recentChat, 3000 );
+            } );
+        } )();
 
         // submit text message
-        $('#text-message').submit(function (event) {
+        $( '#text-message' ).submit( function ( event ) {
             /* Act on the event */
             event.preventDefault();
-            $.ajax({
+            $.ajax( {
                 url: '../includes/text-message-save.php',
                 method: 'GET',
-                data: $('form').serialize(),
+                data: $( 'form' ).serialize(),
                 dataType: 'text',
-                success: function (data) {
+                success: function ( data ) {
                     // show success message
-                    $('#message-send-status').css({
+                    $( '#message-send-status' ).css( {
                         display: 'block'
-                    });
+                    } );
                     // set message input box to empty
-                    $('#message_content').val("");
+                    $( '#message_content' ).val( "" );
                 }
-            })
-        });
+            } )
+        } );
 
         // make request to NodeJs for call initiation
-        $('#request_call').click(function () {
+        $( '#request_call' ).click( function () {
 
-            function randomString(length, chars) {
+            function randomString( length, chars ) {
                 var result = '';
-                for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+                for ( var i = length; i > 0; --i ) result += chars[Math.floor( Math.random() * chars.length )]
                 return result;
             }
             // will take these keys from function above
-            var $initiator_key = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-            var $receiver_key = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            var $initiator_key = randomString( 5, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' );
+            var $receiver_key = randomString( 5, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' );
 
-            var $friend_id = $('#friend_id').text().trim();
-            var $userid = $('#userid').text().trim();
-
+            var $friend_id = $( '#friend_id' ).text().trim();
+            var $userid = $( '#userid' ).text().trim();
+            //192.168.43.164  localhost
             var $url = 'http://localhost:7880/initiate?curr_userID=' + $userid + '&friend_id=' + $friend_id + '&initiator_crypto=' + $initiator_key + '&receiver_crypto=' + $receiver_key;
-            window.open($url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=35,left=150,width=900,height=640");
-        });
+            window.open( $url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=35,left=150,width=900,height=640" );
+        } );
         // end
-    })
+    } )
 </script>
 

@@ -128,9 +128,13 @@ $userid = $_SESSION['userid'];
             <img src="../images/preloader/25.gif" alt="" />
         </div>
     </div>
+
     <script type="text/javascript">
         $(function () {
 
+            $.getScript( '../js/jquery-3.1.1.js', function () {
+                //console.log('script loaded successfully')
+            } )
             // preloader image
             var $cont = $('#preloader_').html();
 

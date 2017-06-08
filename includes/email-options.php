@@ -24,7 +24,7 @@ try{
 	if ($emailQuery->rowCount() == 0) {
 		
 
-		?>
+?>
 
 		<!-- NO EMAIL ADDRESSES FOR THIS USER -->
 		<span class="alert alert-danger">No email addresses exist.</span>
@@ -32,7 +32,7 @@ try{
 		<?php
 	}else{
 
-		?>
+        ?>
 
 		<!-- EMAIL ADDRESSES FOR A SPECIFIC USER -->
 		<div class="container row">
@@ -48,7 +48,7 @@ try{
 				</div>
 				<div class="filter-emails animated swing">
 					<h6>Select email address to send to:</h6>
-					<form class="float-right" class="send_filtered_email" method="POST">
+					<form class="float-right send_filtered_email" method="POST">
 						<div class="form-group">
 							<input type="hidden" id="messageContent" value=" <?php echo $messageContent; ?> " />
 						</div>
@@ -56,19 +56,19 @@ try{
 							<select class="custom-select custom-select-sm" name="choosen_email" id="choosen_email">
 								<?php 
 
-								while ($emailQueryRow = $emailQuery->fetch()) {
+        while ($emailQueryRow = $emailQuery->fetch()) {
 
 
-									?>
+                                ?>
 
-									<option value=" <?php echo $emailQueryRow['email'];  ?> "> <?php echo $emailQueryRow['email'];  ?></option>
+									<option value="<?php echo $emailQueryRow['email'];  ?>"> <?php echo $emailQueryRow['email'];  ?></option>
 
 
 									<?php
 
-								}
+        }
 
-								?> 
+                                    ?> 
 							</select>
 						</div>
 						<div class="form-group text-right">
@@ -91,35 +91,29 @@ try{
 
 		</div>
 		<div class="loader" style="display: none;">
-			<img src="../images/preloader/25.gif" alt="" style=" margin: 20px 0;">
+			<img src="../images/preloader/25.gif" alt="" style="margin: 20px 0;">
 		</div>
 	</div>
-
-
 	<?php
-
-
-
+    }
 
 }
-
-}catch(PDOException $e){
+catch(PDOException $e){
 
 	// output the error with message
 	echo "Error ".$e->getMessage();
 
 }
 
-?>
+    ?>
 
 <script type="text/javascript">
 	$(function(){
 
 		// check online connectivity
-		if(navigator.online == false){
-			alert("No internet connection");
+		if ( navigator.onLine == false ) {
+		    alert( "No internet connection" );
 		}
-
 		$('.filter-emails').css('display', 'none');
 
 		$('#filter').on('click', function(event) {
