@@ -146,11 +146,12 @@ alter table call_handler alter column call_status set default 0;
 create table if not exists post_u_reactions(
 	user_iden int,
     post_iden int,
-    upvotes int,
-    downvotes int,
+    reaction int,
     constraint fk_user_iden foreign key(user_iden) references regusers(id) on delete cascade,
     constraint fk_post_iden foreign key(post_iden) references post_feeds(post_id) on delete cascade
 );
+
+alter table post_u_reactions add column downvote_r nvarchar(800) after reaction
 
 
 

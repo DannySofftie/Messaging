@@ -136,14 +136,8 @@ try{
 
             ?>
             <div class="float-right" style="margin-right: 10px;">
-                <span id="request_call" class="btn btn-sm btn-outline-info">
-                    <i class="mdi mdi-phone"></i>
-                </span>
-                <span class="btn btn-sm btn-outline-success">
-                    <i class="mdi mdi-google-drive"></i>
-                </span>
-                <span class="btn btn-sm btn-outline-warning">
-                    <i class="mdi mdi-content-save-all"></i>
+                <span id="request_call" class="btn btn-sm btn-danger">
+                    <i class="mdi mdi-video"></i>
                 </span>
             </div>
         </div>
@@ -241,7 +235,7 @@ catch(PDOException $e){
 
             function randomString( length, chars ) {
                 var result = '';
-                for ( var i = length; i > 0; --i ) result += chars[Math.floor( Math.random() * chars.length )]
+                for ( var i = length; i > 0; --i ) result += chars[Math.floor( Math.random() * chars.length )];
                 return result;
             }
             // will take these keys from function above
@@ -250,7 +244,7 @@ catch(PDOException $e){
 
             var $friend_id = $( '#friend_id' ).text().trim();
             var $userid = $( '#userid' ).text().trim();
-            //192.168.43.164  localhost
+            //192.168.43.164  localhost  evening-shore-56066.herokuapp.com
             var $url = 'http://localhost:7880/initiate?curr_userID=' + $userid + '&friend_id=' + $friend_id + '&initiator_crypto=' + $initiator_key + '&receiver_crypto=' + $receiver_key;
             window.open( $url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=35,left=150,width=900,height=640" );
         } );

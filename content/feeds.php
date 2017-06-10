@@ -52,6 +52,19 @@ if (!isset($_SESSION['usermail'])) {
         h5 {
             font-size: 13px;
         }
+
+        .call_response {
+            position: absolute;
+            top: 41px;
+            right: 30px;
+            z-index: 9999;
+            display: none;
+        }
+
+        .flash {
+            animation-duration: 4s;
+            animation-iteration-count: infinite;
+        }
     </style>
 
 </head>
@@ -112,13 +125,21 @@ if (!isset($_SESSION['usermail'])) {
             </div>
         </div>
     </div>
+    <div class="call_response animated flash">
+        <span class="btn btn-danger ">
+            <span class="mdi mdi-cancel reject"></span>
+        </span>
+        <span class="btn btn-info">
+            <span class="mdi mdi-phone answer"></span>
+        </span>
+    </div>
     <?php  while($currUserQueryRow = $currUserQuery->fetch()){
     ?>
 
     <span id="curr_user_id" style="display:none">
         <?php  echo $currUserQueryRow['id']  ?>
     </span>
-   
+
     <?php
            }
     ?>
@@ -140,14 +161,14 @@ if (!isset($_SESSION['usermail'])) {
             <img src="../images/preloader/25.gif" alt="" />
         </div>
     </div>
-
+    <audio src="../audio/audio.mp3" id="rigntone"></audio>
     <!--     SCRIPTS     -->
     <script src="../js/jquery-3.1.1.js"></script>
     <script src="../js/bootstrap.js"></script>
     <script src="../js/main.js"></script>
     <script>
         $( function () {
-            
+
             var $cont = $( '#preloader_' ).html();
             $( '.nav-top li' ).click( function ( event ) {
                 /* Act on the event */
@@ -198,12 +219,14 @@ if (!isset($_SESSION['usermail'])) {
                 goToFile( 'gmail-emails.php' );
             } );
 
+            var initiator_key = '';
+            var receiver_key = '';
             // call listener
             ( function callListener() {
                 var $userid = $( '#curr_user_id' ).text().trim();
                 //192.168.43.164  localhost
                 var $currentTime = ( new Date(( new Date(( new Date( new Date() ) ).toISOString() ) ).getTime() - ( ( new Date() ).getTimezoneOffset() * 60000 ) ) ).toISOString().slice( 0, 19 ).replace( 'T', ' ' )
-                
+
                 console.log( $currentTime )
                 var $url = 'http://localhost:7880/checkCallStatus?user_id=' + $userid + '&call_start_time=' + $currentTime;
                 // url to file that checks for a record in database for the current user
@@ -217,7 +240,7 @@ if (!isset($_SESSION['usermail'])) {
                     /*optional stuff to do after success */
                     console.log( data )
                     if ( data === 'continue' ) {
-                        setTimeout( callListener, 3000 );
+                        setTimeout( callListener, 4000 );
                     } else {
                         // request these two keys to initialize socket
                         $.get( '../includes/request_call_keys.php?user_id=' + $userid, function ( data ) {
@@ -225,18 +248,31 @@ if (!isset($_SESSION['usermail'])) {
                             // receive json data
                             var receivedData = data.toString()
                             receivedData = JSON.parse( receivedData )
-                            var initiator_key = receivedData.initiator_key
-                            var receiver_key = receivedData.receiver_key
+                            initiator_key = receivedData.initiator_key
+                            receiver_key = receivedData.receiver_key
                             console.log( 'From ' + initiator_key + ' to me and my key ' + receiver_key )
-                            var $url = 'http://localhost:7880/initiate?initiator_crypto=' + receiver_key + '&receiver_crypto=' + initiator_key;
-                            window.open( $url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=35,left=150,width=900,height=640" );
-
+                            $( '.call_response' ).fadeIn( 'slow' );
+                            $( '#rigntone' ).play();
                         } )
                         console.log( "An active peer is requesting a call." )
                     }
                 } );
 
             } )();
+
+
+            $( '.reject' ).click( function () {
+                $( '.call_response' ).fadeOut( 'slow' );
+                $( '#rigntone' ).attr( 'autoplay', 'false' )
+            } )
+
+            $( '.answer' ).click( function () {
+                $( '.call_response' ).fadeOut( 'slow' );
+                // evening-shore-56066.herokuapp.com
+                $( '#rigntone' ).attr( 'autoplay', 'false' )
+                var $url = 'http://localhost:7880/initiate?initiator_crypto=' + receiver_key + '&receiver_crypto=' + initiator_key;
+                window.open( $url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=35,left=150,width=900,height=640" );
+            } )
         } );
     </script>
 </body>

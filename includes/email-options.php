@@ -12,6 +12,7 @@ $messageContent = $_GET['messageContent'];
 
 <span id="userid" style="display: none;"> <?php echo $userid; ?> </span> 
 
+
 <?php
 try{
 
@@ -75,12 +76,13 @@ try{
 							<button type="submit" class="btn btn-sm btn-outline-success text-uppercase">Confirm Send <span class="mdi mdi-email"></span></button>
 						</div>
 					</form>
-					
+                    
 				</div>
-
+               
 			</div>
+            <div id="connectivity" class="animated jello row" ></div>
 			<div class="email-result">
-
+               
 				<!-- 
 
 
@@ -112,7 +114,7 @@ catch(PDOException $e){
 
 		// check online connectivity
 		if ( navigator.onLine == false ) {
-		    alert( "No internet connection" );
+		    $( '#connectivity' ).html( "<span class='alert alert-danger'>Your internet connection is down.</span>" )
 		}
 		$('.filter-emails').css('display', 'none');
 

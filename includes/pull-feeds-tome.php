@@ -406,5 +406,6 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
             } )
         } );
 
+
     } )
 </script>

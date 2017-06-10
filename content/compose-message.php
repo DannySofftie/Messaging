@@ -66,10 +66,10 @@ $userid = $_SESSION['userid'];
 			<div class="container">
 				<strong>Compose message</strong>
 				<div>
-					<span id="userid" style="display: none;"> <?php     echo $userid;     ?> </span>
+					<span id="userid" style="display: none;"> <?php echo $userid; ?> </span>
 					<textarea name="message_content" class="form-control" id="message_area" rows="5" placeholder="Compose message here........"></textarea>
 				</div>
-				<div class=" row">
+				<div class="row">
 					<div class="col-lg-6 col-md-6 row">
 						<span class="alert alert-danger col-lg-12 col-md-12 col-sm-12 animated rubberBand warning_error"><strong>Warning!</strong> Cannot send blank message.</span>
 					</div>
@@ -77,7 +77,6 @@ $userid = $_SESSION['userid'];
 						<span>Choose action</span>
 						<span class="btn btn-sm btn-outline-info" id="send_mails"><i class="mdi mdi-email"></i></span>
 						<span class="btn btn-sm btn-outline-warning" id="send_sms"><i class="mdi mdi-message-reply-text"></i></span>
-						<span class="btn btn-sm btn-outline-success" id="call_phones"><i class="mdi mdi-phone-in-talk"></i></span>
 						<span class="btn btn-sm btn-outline-primary" id="save_message"><i class="mdi mdi-arrow-down-bold-circle"></i></span>
 					</div>
 				</div>
@@ -90,7 +89,7 @@ $userid = $_SESSION['userid'];
 		</div>
 
 		<div class="loader" style="display: none;">
-			<img src="../images/preloader/25.gif" alt="" style=" margin: 20px 0;">
+			<img src="../images/preloader/25.gif" alt="" style="margin: 20px 0;">
 		</div>
 		
 	</div>

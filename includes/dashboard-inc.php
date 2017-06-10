@@ -239,15 +239,15 @@ require_once 'dbconfig.php';
         }
 
         // function to check news feed for new updates
-        
-        (function updateFeed() {
-            $.post( '../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': $track_page } , function ( data ) {
 
-                $('.load_posts').html(data);
-                setTimeout(updateFeed, 5000);
-            });
-        })();
-       
+        ( function updateFeed() {
+            $.post( '../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': $track_page }, function ( data ) {
+
+                $( '.load_posts' ).html( data );
+                setTimeout( updateFeed, 10000 );
+            } );
+        } )();
+
         $( '#post_post' ).click( function ( event ) {
             /* Act on the event */
             var $postToPost = $( '#business_post' ).val().trim();
@@ -313,8 +313,5 @@ require_once 'dbconfig.php';
             $( '.image_display' ).show();
             readImageURL( this );
         } );
-
-        // the next function will go here
-
     } )
 </script>

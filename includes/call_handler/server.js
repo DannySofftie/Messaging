@@ -16,7 +16,7 @@ connection.connect( )
 // directories to place files
 app.use( express.static( __dirname + '/public' ) )
 app.use( express.static( __dirname + '/' ) )
-app.use( cors( ) ) 
+app.use( cors( ) )
 var filename = ''
 
 // return call options upon request by client
@@ -42,7 +42,7 @@ app.get( '/initiate?', function ( request, response ) {
 	// convert to JSON
 	data = JSON.stringify( data )
 	
-	fs.writeFile( './jsonfiles/' + filename , data , function ( err ) {
+	fs.writeFile( 'jsonfiles/' + filename , data , function ( err ) {
 		if ( err ) throw err
 		console.log( filename + " has been created." )
 	} )
@@ -55,14 +55,21 @@ app.get( '/initiate?', function ( request, response ) {
 		'receiver_key' : receiver_key
 	}
 	
-	connection.query( 'insert into call_handler set ?' , callData , function ( err , result ) {
-		if ( err ) {
-			console.log( "Action failed " + err )
-		}
-		else {
-			console.log( "Success call data insert." );
+	connection.query( 'select * from call_handler where (initiator_key =' + mysql.escape( intiator_key ) + ' and receiver_key=' + mysql.escape( receiver_key ) + ') or (initiator_key = ' + mysql.escape(receiver_key) + ' and receiver_key = ' + mysql.escape(intiator_key) + ')' , function ( err , result ) {
+		if ( result.length == 0 ) {
+			connection.query( 'insert into call_handler set ?' , callData , function ( err , result ) {
+				if ( err ) {
+					console.log( "Action failed " + err )
+				}
+				else {
+					console.log( "Success call data insert." );
+				}
+			} )
+		} else {
+			console.log( "That call data exists" );
 		}
 	} )
+	
 	
 	// respond with index.html file
 	response.sendFile( __dirname + '/index.html' )

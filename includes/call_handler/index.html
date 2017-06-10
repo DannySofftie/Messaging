@@ -60,7 +60,8 @@
             <div id="errors" class="text-info">
                 <div id="error1">
                     <div id="time_started">
-                        <marquee>Video information</marquee> All information about this video call, including call status will be displayed on this section
+                        <marquee>Video information</marquee> 
+                        <h6 id="information"></h6>
                     </div>
                     <div id="error_list" class="text-danger">
 
@@ -93,7 +94,7 @@
 
             var $initiator_id = getParameterByName( 'initiator_crypto' );
             var $receiver_id = getParameterByName( 'receiver_crypto' );
-
+            // host : 'evening-shore-56066.herokuapp.com'
             var peer = new Peer( $initiator_id,
                 {
                     host: 'evening-shore-56066.herokuapp.com',
@@ -114,12 +115,14 @@
 
             peer.on( 'open', function ( id ) {
                 // make an AJAX request and store this id for use by other peer to connect
-                console.log( "My peer id is " + id )
+                console.log( "My peer id is " + id );
+                $( '#information' ).text("You are now connected. You can now place a call. If connection is lost, we will reload this page automatically. Don't get furious :-) ")
             } )
 
             peer.on( 'error', function ( err ) {
                 // alert with the message
                 $( '#error_list' ).text( err.message );
+                location.reload();
             } );
 
             navigator.getMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia

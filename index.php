@@ -455,7 +455,6 @@ if (isset($_SESSION['usermail'])) {
             $('#recover_pwd').click(function (event) {
                 $('.sign_up_here').slideUp(1000, function () {
                     $('.recover_password').slideDown(1000, function () {
-
                     });
                 });
             });
