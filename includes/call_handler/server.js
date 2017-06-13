@@ -66,7 +66,7 @@ app.get( '/initiate?', function ( request, response ) {
 				}
 			} )
 		} else {
-			console.log( "That call data exists" );
+			console.log( "Call data exists" );
 		}
 	} )
 	
