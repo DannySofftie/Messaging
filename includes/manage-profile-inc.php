@@ -257,7 +257,7 @@ if ($selected_option == 'manage_my_profile') {
 							<h5>Business category</h5>
 							<div id="new_bs_catg" style="display: none; clear: both;">
 								<select class="form-control form-control-sm custom-select-sm animated fadeIn bs_category_input" name="bs_category">
-									<option value=" <?php  if(!empty($bsInfoQueryRow['bs_cat_id']))  echo $bsInfoQueryRow['bs_cat_id'] ?>">Choose here</option>
+									<option value="<?php  if(!empty($bsInfoQueryRow['bs_cat_id']))  echo $bsInfoQueryRow['bs_cat_id'] ?>">Choose here</option>
 									<?php 
     $bsCategory = $conn->query("SELECT * from bs_categories order by cat_name");
     while ($bsCategoryRow = $bsCategory->fetch()) {

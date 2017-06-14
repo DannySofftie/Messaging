@@ -5,18 +5,20 @@
         left: 45%;
         margin: 10px;
     }
-    #informational_text{
+
+    #informational_text {
         height: 70px;
         width: 100%;
         position: fixed;
         top: 40%;
         left: 36%;
         z-index: 9999;
-        display: none
+        display: none;
     }
-    #informational_text span{
-        box-shadow: 1px 0px 10px 2px rgba(0,0,0,0.4)
-    }
+
+        #informational_text span {
+            box-shadow: 1px 0px 10px 2px rgba(0,0,0,0.4);
+        }
 </style>
 
 <?php
@@ -169,9 +171,9 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
 		}
 
 		// merge arrays to include current user id and their posts
-	     array_push($connectedUsersIds , $userid);
+        array_push($connectedUsersIds , $userid);
 
-         foreach ($connectedUsersIds as $value) {
+        foreach ($connectedUsersIds as $value) {
 
 			// SELECT * from post_feeds where user_id = :value order by post_time desc
 			$postFetchQuery = $conn->prepare("SELECT * from(SELECT regusers.prof_image, regusers.fname, regusers.nickname,post_feeds.post_id,post_feeds.user_id, post_feeds.post_text, post_feeds.post_time, post_feeds.post_image from regusers right join post_feeds on regusers.id = post_feeds.user_id order by post_feeds.post_time desc limit $position,$item_per_page) as t where user_id = :value order by post_time desc");
@@ -195,7 +197,7 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
     <div class="card  card-outline-warning postview">
         <div class="card-block">
             <h5 class="card-title text-info">
-                <a href="">
+                <a href="" class="username">
                     <?php echo $outputData->username ?>
                 </a>
             </h5>
@@ -240,7 +242,7 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
     <div class="card  card-outline-warning postview">
         <div class="card-block">
             <h5 class="card-title text-info">
-                <a href="">
+                <a href="" class="username">
                     <?php echo $outputData->username ?>
                 </a>
             </h5>
@@ -295,9 +297,7 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
     ?>
 </div>
 <div id="information_container">
-    <div id="informational_text">
-        
-    </div>
+    <div id="informational_text"></div>
 </div>
 <script type="text/javascript">
     $( function () {
@@ -367,13 +367,13 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
                 url: '../includes/post-feeds-reactions.php?upvote=true' + '&post_id=' + $( this ).attr( 'post_id' ),
                 method: 'GET',
                 async: false,
-                success: function (data) {
+                success: function ( data ) {
                     // change text color
                     var $currClicked = $( event.target ).closest( '#upvote .upvote' );
                     $currClicked.attr( 'class', 'text-primary' );
 
                     $( '#informational_text' ).css( 'display', 'block' );
-                    $( '#informational_text' ).html(data)
+                    $( '#informational_text' ).html( data )
                 },
                 error: function () {
                     alert( 'Upvote failed' )
@@ -390,7 +390,7 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
                 url: '../includes/post-feeds-reactions.php?downvote=true' + '&post_id=' + $( this ).attr( 'post_id' ),
                 method: 'GET',
                 async: false,
-                success: function (data) {
+                success: function ( data ) {
                     // change text color
                     var $currClicked = $( event.target ).closest( '#upvote .downvote' );
                     $currClicked.attr( 'class', 'text-warning' );
@@ -398,7 +398,7 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
                     $( '#informational_text' ).html( data )
                 },
                 error: function () {
-                    alert( 'Downvote failed' )
+                    alert( 'Downvote failed' );
                 },
                 cache: false,
                 contentType: false,
@@ -406,6 +406,10 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
             } )
         } );
 
+        $( '.username' ).click( function ( event ) {
+            event.preventDefault();
+            alert( $( this ).text() )
+        } )
 
     } )
 </script>

@@ -65,6 +65,7 @@ if (!isset($_SESSION['usermail'])) {
             animation-duration: 4s;
             animation-iteration-count: infinite;
         }
+        
     </style>
 
 </head>
@@ -125,6 +126,7 @@ if (!isset($_SESSION['usermail'])) {
             </div>
         </div>
     </div>
+
     <div class="call_response animated flash">
         <span class="btn btn-danger ">
             <span class="mdi mdi-cancel reject"></span>

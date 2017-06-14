@@ -151,7 +151,9 @@ create table if not exists post_u_reactions(
     constraint fk_post_iden foreign key(post_iden) references post_feeds(post_id) on delete cascade
 );
 
-alter table post_u_reactions add column downvote_r nvarchar(800) after reaction
+alter table post_u_reactions add column downvote_r nvarchar(800) after reaction;
+
+
 
 
 

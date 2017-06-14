@@ -99,6 +99,26 @@ require_once 'dbconfig.php';
             padding: 10px 10px;
         }
     }
+    .profile_view {
+        height: 100%;
+        width: 100%;
+        z-index: 999;
+        background-color: rgba(0,0,0,0.5);
+        position: fixed;
+        top: 0;
+        left: 16px;
+        color: white;
+    }
+    #load_body{
+        height: 600px;
+        width: 800px;
+        background-color: rgba(0,0,0,0.3);
+        border-radius: 10px;
+        position: fixed;
+        left: 19%;
+        top: 7%;
+        z-index: 99999;
+    }
 </style>
 
 <div class="container animated fadeIn row col-lg-12 col-md-12" style="height: 100%;">
@@ -150,6 +170,14 @@ require_once 'dbconfig.php';
             </div>
 
         </div>
+
+        <!-- PROFILE VIEW HERE -->
+        <div class="profile_view row text-center">
+            <div id="load_body" class="col-lg-7 col-md-7 ">
+                <h5>Some text</h5>
+            </div>
+        </div>
+
         <!-- LOAD MORE BUTTON TO BE PLACED HERE -->
         <div class="preloader_holder">
             <button class="btn btn-sm btn-info text-uppercase" id="load_more_feeds">
@@ -244,7 +272,7 @@ require_once 'dbconfig.php';
             $.post( '../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': $track_page }, function ( data ) {
 
                 $( '.load_posts' ).html( data );
-                setTimeout( updateFeed, 10000 );
+                setTimeout( updateFeed, 15000 );
             } );
         } )();
 
@@ -313,5 +341,12 @@ require_once 'dbconfig.php';
             $( '.image_display' ).show();
             readImageURL( this );
         } );
+
+        // profile view request
+       
+        $( '.profile_view' ).click( function () {
+            $( this ).fadeOut( 2000 );
+        } );
+
     } )
 </script>

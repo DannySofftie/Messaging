@@ -491,9 +491,11 @@ if (isset($_SESSION['usermail'])) {
                         $input.attr('autocomplete', 'off');
                         var $email = $(this).val().trim();
                         var $emailRegex = /^\b[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
-                        if (!$emailRegex.test($email)) {
+                        if ( !$emailRegex.test( $email ) ) {
+                            // doesn't match
                             $('#emailValidate').show();
                         } else {
+                            // matches
                             $('#emailValidate').hide();
                         }
                     } else if ($input.attr('id') === 'phone') {
