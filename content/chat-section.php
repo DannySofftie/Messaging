@@ -130,91 +130,104 @@ $userid = $_SESSION['userid'];
     </div>
 
     <script type="text/javascript">
-        $(function () {
-
+        $( function () {
             $.getScript( '../js/jquery-3.1.1.js', function () {
                 //console.log('script loaded successfully')
             } )
+
+            $.getScript( '../js/bootstrap.js', function () {
+                //console.log('script loaded successfully')
+            } )
+            $.getScript( '../js/dataTables.min.js', function () {
+                //console.log('script loaded successfully')
+            } )
+            $.getScript( '../js/jquery.dataTables.js', function () {
+                //console.log('script loaded successfully')
+            } )
+            $.getScript( '../js/dataTables.bootstrap.js', function () {
+                //console.log('script loaded successfully')
+            } )
+            
             // preloader image
-            var $cont = $('#preloader_').html();
+            var $cont = $( '#preloader_' ).html();
 
-            var $userid = $('#userid').text();
+            var $userid = $( '#userid' ).text();
 
-            $('.list-group li').on('hover', function (event) {
+            $( '.list-group li' ).on( 'hover', function ( event ) {
                 event.preventDefault();
                 /* Act on the event */
-                var $curr_li = $(event.target).closest('li span.btn');
-                $curr_li.removeClass('btn-outline-info');
-                $curr_li.addClass('btn-outline-warning');
-            });
-            $('.list-group li').click(function (event) {
+                var $curr_li = $( event.target ).closest( 'li span.btn' );
+                $curr_li.removeClass( 'btn-outline-info' );
+                $curr_li.addClass( 'btn-outline-warning' );
+            } );
+            $( '.list-group li' ).click( function ( event ) {
                 /* Act on the event */
-                $('.list-group li span').removeClass('btn-info');
-                $('.list-group li span').addClass('btn-outline-info');
-                var $curr_li = $(event.target).closest('li span.btn');
-                $curr_li.removeClass('btn-outline-info');
-                $curr_li.addClass('btn-info');
-            });
+                $( '.list-group li span' ).removeClass( 'btn-info' );
+                $( '.list-group li span' ).addClass( 'btn-outline-info' );
+                var $curr_li = $( event.target ).closest( 'li span.btn' );
+                $curr_li.removeClass( 'btn-outline-info' );
+                $curr_li.addClass( 'btn-info' );
+            } );
 
             // load to prepare chat section-display
-            $.get('../includes/autoload.php', function (data) {
+            $.get( '../includes/autoload.php', function ( data ) {
                 /*optional stuff to do after success */
-                $('.section-display').html(data);
-            });
+                $( '.section-display' ).html( data );
+            } );
 
             // function to display selected content
-            function navigateToFile($pathURL, $domElement) {
-                $('.section-display').html($cont);
-                $.get($pathURL, function (data) {
+            function navigateToFile( $pathURL, $domElement ) {
+                $( '.section-display' ).html( $cont );
+                $.get( $pathURL, function ( data ) {
                     /*optional stuff to do after success */
-                    $domElement.html(data);
-                });
+                    $domElement.html( data );
+                } );
             }
 
             //fetch list of all friends
-            $('#all-chats').click(function (event) {
-                navigateToFile('../includes/autoload.php', $('.section-display'));
+            $( '#all-chats' ).click( function ( event ) {
+                navigateToFile( '../includes/autoload.php', $( '.section-display' ) );
 
                 var xhttp = new XMLHttpRequest();
-                xhttp.open('GET', '../includes/friends-list.php');
+                xhttp.open( 'GET', '../includes/friends-list.php' );
                 xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && this.status == 200) {
-                        $('#folder-specific-messages').html(xhttp.responseText);
+                    if ( this.readyState == 4 && this.status == 200 ) {
+                        $( '#folder-specific-messages' ).html( xhttp.responseText );
                     }
                 };
                 xhttp.send();
-            });
+            } );
 
             // VIEW INCOMING MESSAGES
-            $('#compose').click(function (event) {
+            $( '#compose' ).click( function ( event ) {
                 /* Act on the event */
-                navigateToFile('compose-message.php', $('.section-display'));
-            });
+                navigateToFile( 'compose-message.php', $( '.section-display' ) );
+            } );
 
             // VIEW ALL SENT MESSAGES
-            $('#sent-messages').click(function (event) {
+            $( '#sent-messages' ).click( function ( event ) {
                 /* Act on the event */
-                navigateToFile('sent-messages.php', $('.section-display'));
-            });
+                navigateToFile( 'sent-messages.php', $( '.section-display' ) );
+            } );
 
             // VIEW ALL SAVED MESSAGES
-            $('#saved-messages').click(function (event) {
+            $( '#saved-messages' ).click( function ( event ) {
                 /* Act on the event */
-                navigateToFile('saved-messages.php?userid=' + $userid + '&fetchAllSaved=true', $('.section-display'));
-            });
+                navigateToFile( 'saved-messages.php?userid=' + $userid + '&fetchAllSaved=true', $( '.section-display' ) );
+            } );
 
             // VIEW MESSAGES IN GMAIL
-            $('#gmail').click(function (event) {
+            $( '#gmail' ).click( function ( event ) {
                 /* Act on the event */
-                navigateToFile('gmail-emails.php', $('.section-display'));
-            });
+                navigateToFile( 'gmail-emails.php', $( '.section-display' ) );
+            } );
 
             // MANAGE USER PROFILE AND FRIENDS, SETUP BULK MESSAGING AND SUCH
-            $('#manage').click(function (event) {
+            $( '#manage' ).click( function ( event ) {
                 /* Act on the event */
-                navigateToFile('manage-profile.php?userid=' + $userid, $('.section-display'));
-            });
+                navigateToFile( 'manage-profile.php?userid=' + $userid, $( '.section-display' ) );
+            } );
 
-        })
+        } )
     </script>
 </div>

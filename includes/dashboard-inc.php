@@ -99,26 +99,10 @@ require_once 'dbconfig.php';
             padding: 10px 10px;
         }
     }
-    .profile_view {
-        height: 100%;
-        width: 100%;
-        z-index: 999;
-        background-color: rgba(0,0,0,0.5);
-        position: fixed;
-        top: 0;
-        left: 16px;
-        color: white;
+    .btn , .allFormData{
+        z-index: 0;
     }
-    #load_body{
-        height: 600px;
-        width: 800px;
-        background-color: rgba(0,0,0,0.3);
-        border-radius: 10px;
-        position: fixed;
-        left: 19%;
-        top: 7%;
-        z-index: 99999;
-    }
+    
 </style>
 
 <div class="container animated fadeIn row col-lg-12 col-md-12" style="height: 100%;">
@@ -171,15 +155,10 @@ require_once 'dbconfig.php';
 
         </div>
 
-        <!-- PROFILE VIEW HERE -->
-        <div class="profile_view row text-center">
-            <div id="load_body" class="col-lg-7 col-md-7 ">
-                <h5>Some text</h5>
-            </div>
-        </div>
+        
 
         <!-- LOAD MORE BUTTON TO BE PLACED HERE -->
-        <div class="preloader_holder">
+        <div class="preloader_holder" style="z-index: -1;">
             <button class="btn btn-sm btn-info text-uppercase" id="load_more_feeds">
                 load more
                 <span class="mdi mdi-account-convert"></span>
@@ -190,7 +169,7 @@ require_once 'dbconfig.php';
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-3 hidden-md-down" style="height: 100%; overflow-y: scroll;">
+    <div class="col-lg-3 col-md-3 hidden-md-down" style="height: 100%; overflow-y: scroll; z-index: -1;">
         <h6>Share your marketing strategies</h6>
         <span class="btn btn-sm btn-outline-warning text-uppercase">
             share?
@@ -227,6 +206,7 @@ require_once 'dbconfig.php';
         <hr />
 
     </div>
+    
 </div>
 
 <script type="text/javascript">
@@ -344,9 +324,5 @@ require_once 'dbconfig.php';
 
         // profile view request
        
-        $( '.profile_view' ).click( function () {
-            $( this ).fadeOut( 2000 );
-        } );
-
     } )
 </script>

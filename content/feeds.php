@@ -24,6 +24,9 @@ if (!isset($_SESSION['usermail'])) {
 
     <link type="text/css" href="../css/bootstrap.css" rel="stylesheet" media="screen, projection" />
     <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap-datepicker.css" />
+    <link rel="stylesheet" type="text/css" href="../css/dataTables.responsive.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.css" />
     <link type="text/css" href="../css/materialdesignicons.css" rel="stylesheet" media="screen, projection" />
     <link type="text/css" href="../css/custom-style.css" rel="stylesheet" media="screen, projection" />
     <script type="text/javascript" src=""></script>

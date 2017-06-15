@@ -322,6 +322,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".htaccess" />
+    <Content Include="css\bootstrap-datepicker.css" />
+    <Content Include="css\dataTables.responsive.css" />
+    <Content Include="css\jquery-ui.css" />
     <Content Include="includes\call_handler\public\assets\materialdesignicons.css" />
     <Content Include="includes\call_handler\public\files\error.html" />
     <Content Include="includes\call_handler\public\fonts\fontawesome-webfont.eot" />
@@ -360,5 +363,8 @@
     <Content Include="includes\call_handler\public\js\script.js" />
     <Content Include="includes\call_handler\package.json" />
     <Content Include="includes\call_handler\public\js\tether.js" />
+    <Content Include="js\bootstrap-datepicker.js" />
+    <Content Include="js\dataTables.responsive.js" />
+    <Content Include="js\jquery-ui.js" />
   </ItemGroup>
 </Project>

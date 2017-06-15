@@ -86,6 +86,8 @@ catch (PDOException $e) {
 
 <script>
     $(function () {
-        $('#sent_messages').dataTable();
+        $( '#sent_messages' ).dataTable( {
+            responsive: true
+        });
     })
 </script>

@@ -3,7 +3,7 @@ session_start();
 require_once 'includes/dbconfig.php';
 if (isset($_SESSION['usermail'])) {
     // redirect to landing page
-    header("Location: content/feeds?/");
+    header("Location: content/feeds");
 }
 ?>
 <!DOCTYPE html>

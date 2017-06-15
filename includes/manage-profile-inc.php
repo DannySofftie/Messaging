@@ -508,15 +508,16 @@ if ($selected_option == 'manage_contacts'){
     ?>
 
 
-    <script src="../js/dataTables.min.js"></script>
-    <script src="../js/dataTables.bootstrap.js"></script>
+   
 <script type="text/javascript">
 
 	$(function(){ 
 
 		var $userid = $('#userid').text();
 		
-		$('#contactData').dataTable();
+		$( '#contactData' ).dataTable( {
+            responsive: true
+		} );
 		
 		$('.form-control').focus(function(event) {
 			/* Act on the event */

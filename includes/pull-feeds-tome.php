@@ -19,6 +19,26 @@
         #informational_text span {
             box-shadow: 1px 0px 10px 2px rgba(0,0,0,0.4);
         }
+    .profile_view {
+        height: 100%;
+        width: 100%;
+        z-index: 9999;
+        position: fixed;
+        top: 0;
+        left: 16px;
+        color: white;
+        background-color: rgba(0,0,0,0.3);
+        display: none;
+    }
+
+    #load_body {
+        height: 80%;
+        width: 800px;
+        background-color: rgba(0,0,0,0.6);
+        border-radius: 10px;
+        position: absolute;
+        margin: 6% 20%;
+    }
 </style>
 
 <?php
@@ -29,6 +49,11 @@ date_default_timezone_set("Africa/Nairobi");
 $userid = $_SESSION['userid'];
 require_once 'dbconfig.php';
 
+$userQuery1 = $conn->query("select * from regusers where id = '$userid'");
+$userQuery1Row = $userQuery1 -> fetch();
+?>
+<span id="currUserId" style="display: none" ><?php echo $userQuery1Row['fname'] . "." . $userQuery1Row['nickname']  ?></span>
+<?php
 if (isset($_GET['postContent'])) {
 	// post feed to database
 	$postContent = $_GET['postContent'];
@@ -176,12 +201,13 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
         foreach ($connectedUsersIds as $value) {
 
 			// SELECT * from post_feeds where user_id = :value order by post_time desc
-			$postFetchQuery = $conn->prepare("SELECT * from(SELECT regusers.prof_image, regusers.fname, regusers.nickname,post_feeds.post_id,post_feeds.user_id, post_feeds.post_text, post_feeds.post_time, post_feeds.post_image from regusers right join post_feeds on regusers.id = post_feeds.user_id order by post_feeds.post_time desc limit $position,$item_per_page) as t where user_id = :value order by post_time desc");
+			$postFetchQuery = $conn->prepare("SELECT * from(SELECT regusers.id, regusers.prof_image, regusers.fname, regusers.nickname,post_feeds.post_id,post_feeds.user_id, post_feeds.post_text, post_feeds.post_time, post_feeds.post_image from regusers right join post_feeds on regusers.id = post_feeds.user_id order by post_feeds.post_time desc limit $position,$item_per_page) as t where user_id = :value order by post_time desc");
 			$postFetchQuery->bindParam(":value" , $value);
 			$postFetchQuery->execute();
             while($postFetchQueryRow = $postFetchQuery->fetch()){
                 // json data from feeds
                 $outputData = new stdClass();
+                $outputData -> userid = $postFetchQueryRow['id'];
                 $outputData -> text = $postFetchQueryRow['post_text'];
                 $outputData -> time = filterTime($postFetchQueryRow['post_time']);
                 $outputData -> image = $postFetchQueryRow['post_image'];
@@ -201,6 +227,7 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
                     <?php echo $outputData->username ?>
                 </a>
             </h5>
+            <span id="userid"><?php  echo $outputData->userid  ?></span>
             <h6 class="card-subtitle mb-2 text-muted">
                 <?php echo $outputData->time ?>
             </h6>
@@ -298,6 +325,12 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
 </div>
 <div id="information_container">
     <div id="informational_text"></div>
+</div>
+<!-- PROFILE VIEW HERE -->
+<div class="profile_view row text-center">
+    <div id="load_body" class="col-lg-7 col-md-7 ">
+        <h5>Some text</h5>
+    </div>
 </div>
 <script type="text/javascript">
     $( function () {
@@ -406,10 +439,24 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
             } )
         } );
 
+        var $currUserName = $( '#currUserId' ).text().trim();
+
         $( '.username' ).click( function ( event ) {
             event.preventDefault();
-            alert( $( this ).text() )
+            var $username = $( this ).text().trim();
+            var $userid = $( event.target ).closest( '.card-block' ).find( '#userid' );
+            $userid = $userid.text().trim();
+            history.pushState( {}, "Profile view ", window.location.pathname + '?profile_view=' + $userid + '&profile_name=' + $username );
+
+           // pass data to the modal in the previous page
+            $.post( '../includes/dashboard-inc.php', {username:$username,userid:$userid}, function () {
+                alert( 'data sent' );
+            } );
         } )
 
+        if ( history.pushState ) {
+            var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?___username=" + $currUserName;
+            window.history.pushState( { path: newUrl }, 'Home page', newUrl );
+        }
     } )
 </script>
