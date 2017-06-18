@@ -105,10 +105,10 @@ require_once 'dbconfig.php';
     
 </style>
 
-<div class="container animated fadeIn row col-lg-12 col-md-12" style="height: 100%;">
+<div class="animated fadeIn row col-lg-12 col-md-12" style="height: 100%;">
     <div class="col-lg-9 col-md-9 col-sm-12" style="height: 100%; overflow-y: scroll;">
         <div class="row post_entry_box">
-            <div class="card col-lg-10 col-md-10">
+            <div class="card col-lg-10 col-md-10 left_section">
                 <div class="card-header">
                     <h5>Let other businesses know what you are up to? Share a marketing trick? Watch your competitors moves!</h5>
                 </div>
@@ -158,59 +158,39 @@ require_once 'dbconfig.php';
         
 
         <!-- LOAD MORE BUTTON TO BE PLACED HERE -->
-        <div class="preloader_holder" style="z-index: -1;">
-            <button class="btn btn-sm btn-info text-uppercase" id="load_more_feeds">
-                load more
-                <span class="mdi mdi-account-convert"></span>
-            </button>
-        </div>
+        
         <div class="preloader_content" style="display: none;">
             <img src="../images/preloader/25.gif" alt="" style="height: 30px; width: 30px" />
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-3 hidden-md-down" style="height: 100%; overflow-y: scroll; z-index: -1;">
-        <h6>Share your marketing strategies</h6>
-        <span class="btn btn-sm btn-outline-warning text-uppercase">
-            share?
-            <span class="mdi mdi-call-merge"></span>
-        </span>
-        <hr />
-        <h6>Buy mailing list from your competitor</h6>
-        <span class="btn btn-sm btn-outline-info text-uppercase">
-            buy?
-            <span class="mdi mdi-microscope"></span>
-        </span>
-        <div class="dropdown-divider"></div>
-        <h6>
-            Business dealing with goods under your business category are reaching thousands of clients through digital marketing. Don't be left out.
-			Utilize the power of this platform to reach your clients. &raquo;&nbsp;
-            <span class="mdi mdi-emoticon mdi-18px" style="color: teal"></span>
-        </h6>
-        <hr />
-        <h6>
-            ReachCleints.com is collecting thousands of emails online to improve your marketing techniques. Go premium to access a ton of email addresses for potential clients based on your location.
-        </h6>
-        <span class="btn btn-sm btn-outline-success text-uppercase">
-            go premium
-            <span class="mdi mdi-magnet-on"></span>
-        </span>
-        <hr />
-        <h6>
-            For a limited time, we are offering free marketing training for free to our loyal digital marketters. We are offering this training online.
-        </h6>
-        <span class="btn btn-sm btn-outline-warning text-uppercase">
-            access freemium
-            <span class="mdi mdi-webhook"></span>
-        </span>
-        <hr />
+    <div class="col-lg-3 col-md-3 hidden-md-down rss_feed" style="height: 100%; overflow-y: scroll; z-index: -1;">
+        
+        <!-- LOAD RSS FEED HERE  -->
 
     </div>
     
 </div>
-
 <script type="text/javascript">
     $( function () {
+
+        
+        // function to fecth rss feeds
+        ( function refreshRSS () {
+            $.post( '../includes/rss_section.php', {
+                fetch_rss: true
+            }, function ( data ) {
+                // succesfull operation
+                $( '.rss_feed' ).html( data );
+
+                $( '.rss_feed' ).animate( {
+                    scrollTop: $( '.rss_feed' ).get( 0 ).scrollHeight
+                }, 1500 );
+
+                setTimeout( refreshRSS, 4000 );
+            } );
+        } )();
+        
         $( '#discard' ).click( function ( event ) {
             /* Act on the event */
             $( '#business_post' ).val( "" ).focus();
@@ -223,36 +203,13 @@ require_once 'dbconfig.php';
         } );
 
 
-        // LOAD MORE FEEDS TO CURRENT PAGE
-        var $track_page = 1;
-
-        // call function by default
-        load_more_content( $track_page );
-
-        $( '#load_more_feeds' ).click( function ( e ) {
-            // $(event.target).closest('span').addClass('mdi-spin');
-            $track_page++;
-            load_more_content( $track_page );
-        } );
-
-        function load_more_content( page_number ) {
-            $.post( '../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': page_number }, function ( data ) {
-                if ( data.trim().length == 0 ) {
-                    $( '#load_more_feeds' ).text( "You have reached the end of the current feeds" ).prop( 'disabled', true );
-                } else {
-                    $( '.post_preloader' ).hide();
-                    $( '.load_posts' ).append( data );
-                }
-            } );
-        }
-
         // function to check news feed for new updates
 
         ( function updateFeed() {
-            $.post( '../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': $track_page }, function ( data ) {
+            $.post( '../includes/pull-feeds-tome.php?fetchNew=true', function ( data ) {
 
                 $( '.load_posts' ).html( data );
-                setTimeout( updateFeed, 15000 );
+                setTimeout( updateFeed, 25000 );
             } );
         } )();
 
@@ -288,7 +245,7 @@ require_once 'dbconfig.php';
                             $( this ).slideUp( 5000 );
                             $( '#post_result' ).html( resultText );
                         } );
-                        $.post( '../includes/pull-feeds-tome.php?fetchNew=true', { 'page_number': page_number }, function ( data ) {
+                        $.post( '../includes/pull-feeds-tome.php?fetchNew=true', function ( data ) {
                             /*optional stuff to do after success */
                             $( '.load_posts' ).html( data );
                         } );
@@ -321,8 +278,5 @@ require_once 'dbconfig.php';
             $( '.image_display' ).show();
             readImageURL( this );
         } );
-
-        // profile view request
-       
     } )
 </script>

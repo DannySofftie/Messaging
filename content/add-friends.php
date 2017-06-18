@@ -137,13 +137,11 @@ if (!isset($_SESSION['usermail'])) {
         <?php
             }
         }
-
     }
         ?>
     </div>
 </div>
 <?php
-
 }
 ?>
 <script type="text/javascript">
@@ -162,7 +160,6 @@ if (!isset($_SESSION['usermail'])) {
                     $('.action_result').html(data);
                 });
                 $('.action_result').fadeOut(3000);
-
                 $currSpan.css({
                     'color': 'green'
                 });

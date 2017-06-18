@@ -1,12 +1,7 @@
 <?php
-
 session_start();
-
 require_once 'dbconfig.php';
-
 $userid = $_SESSION['userid'];
-
-
 ?>
 
 <style type="text/css" media="screen">

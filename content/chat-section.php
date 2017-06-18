@@ -49,7 +49,7 @@ $userid = $_SESSION['userid'];
                     <?php
                         if(!empty($userQueryRow['prof_image'])){
                     ?>
-                    <img src=" <?php echo $userQueryRow['prof_image']; ?> " alt="profile image" />
+                    <img src="<?php echo $userQueryRow['prof_image']; ?> " alt="profile image" />
                     <?php
                         }else {
 
@@ -81,7 +81,14 @@ $userid = $_SESSION['userid'];
             <li id="all-chats">
                 <span class="btn btn-sm btn-outline-info">
                     <span class="mdi mdi-wechat"></span>&nbsp; Chats
-                    <span class="badge badge-info">26</span>
+                    <span class="badge badge-info">
+                        <?php
+                        $friendsQuery = $conn->prepare("SELECT * from friends_filter where (my_id= :userid or friend_id = :userid) and request_status = 1 and block_status = 0");
+                        $friendsQuery->bindParam(":userid" , $userid);
+                        $friendsQuery->execute();
+                        echo (($friendsQuery->rowCount()) / 2);
+                        ?>
+                    </span>
                 </span>
             </li>
             <li id="gmail">

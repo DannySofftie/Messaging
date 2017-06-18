@@ -204,10 +204,12 @@
     <Compile Include="includes\friends-list.php" />
     <Compile Include="includes\manage-profile-inc.php" />
     <Compile Include="includes\post-feeds-reactions.php" />
+    <Compile Include="includes\profile-view.php" />
     <Compile Include="includes\pull-feeds-tome.php" />
     <Compile Include="includes\recover_password.php" />
     <Compile Include="includes\register-client-inc.php" />
     <Compile Include="includes\request_call_keys.php" />
+    <Compile Include="includes\request_response.php" />
     <Compile Include="includes\save-message.php" />
     <Compile Include="includes\sent-messages-fetch.php" />
     <Compile Include="includes\sign-in-inc.php" />
@@ -215,6 +217,7 @@
     <Compile Include="includes\sms-options.php" />
     <Compile Include="includes\specific-id-chats.php" />
     <Compile Include="includes\start-chat.php" />
+    <Compile Include="includes\subscribe-mail.php" />
     <Compile Include="includes\terminate-session.php" />
     <Compile Include="includes\text-message-save.php" />
     <Compile Include="includes\update_profile.php" />

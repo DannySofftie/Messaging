@@ -26,7 +26,6 @@
         position: fixed;
         top: 0;
         left: 16px;
-        color: white;
         background-color: rgba(0,0,0,0.3);
         display: none;
     }
@@ -34,7 +33,6 @@
     #load_body {
         height: 80%;
         width: 800px;
-        background-color: rgba(0,0,0,0.6);
         border-radius: 10px;
         position: absolute;
         margin: 6% 20%;
@@ -118,10 +116,6 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
 ?>
 <div class="all_posts_holder">
     <?php
-	// fetch new posts
-    $page_number = filter_var($_POST['page_number'] , FILTER_SANITIZE_NUMBER_INT ,FILTER_FLAG_STRIP_HIGH);
-    $item_per_page = filter_var(16 , FILTER_SANITIZE_NUMBER_INT , FILTER_FLAG_STRIP_HIGH);
-    $position = (($page_number - 1) * $item_per_page);
 
     // function to convert time to appropriate filter
     function filterTime($date_b){
@@ -201,7 +195,7 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
         foreach ($connectedUsersIds as $value) {
 
 			// SELECT * from post_feeds where user_id = :value order by post_time desc
-			$postFetchQuery = $conn->prepare("SELECT * from(SELECT regusers.id, regusers.prof_image, regusers.fname, regusers.nickname,post_feeds.post_id,post_feeds.user_id, post_feeds.post_text, post_feeds.post_time, post_feeds.post_image from regusers right join post_feeds on regusers.id = post_feeds.user_id order by post_feeds.post_time desc limit $position,$item_per_page) as t where user_id = :value order by post_time desc");
+			$postFetchQuery = $conn->prepare("SELECT * from(SELECT regusers.id, regusers.prof_image, regusers.fname, regusers.nickname,post_feeds.post_id,post_feeds.user_id, post_feeds.post_text, post_feeds.post_time, post_feeds.post_image from regusers right join post_feeds on regusers.id = post_feeds.user_id order by post_feeds.post_time desc) as t where user_id = :value order by post_time desc");
 			$postFetchQuery->bindParam(":value" , $value);
 			$postFetchQuery->execute();
             while($postFetchQueryRow = $postFetchQuery->fetch()){
@@ -227,7 +221,7 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
                     <?php echo $outputData->username ?>
                 </a>
             </h5>
-            <span id="userid"><?php  echo $outputData->userid  ?></span>
+            <span id="userid" style="display: none"><?php  echo $outputData->userid  ?></span>
             <h6 class="card-subtitle mb-2 text-muted">
                 <?php echo $outputData->time ?>
             </h6>
@@ -319,7 +313,6 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
     catch(PDOException $e){
 		echo "Error ".$e->getMessage();
 	}
-
 }
     ?>
 </div>
@@ -328,6 +321,9 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
 </div>
 <!-- PROFILE VIEW HERE -->
 <div class="profile_view row text-center">
+    <div style="position: absolute; top: 25px; right: 240px; z-index: 9999;">
+        <i class="mdi mdi-window-close mdi-48px" style="cursor:pointer; color: darkslateblue" id="close_profile"></i>
+    </div>
     <div id="load_body" class="col-lg-7 col-md-7 ">
         <h5>Some text</h5>
     </div>
@@ -439,7 +435,6 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
             } )
         } );
 
-        var $currUserName = $( '#currUserId' ).text().trim();
 
         $( '.username' ).click( function ( event ) {
             event.preventDefault();
@@ -448,13 +443,21 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
             $userid = $userid.text().trim();
             history.pushState( {}, "Profile view ", window.location.pathname + '?profile_view=' + $userid + '&profile_name=' + $username );
 
-           // pass data to the modal in the previous page
-            $.post( '../includes/dashboard-inc.php', {username:$username,userid:$userid}, function () {
-                alert( 'data sent' );
-            } );
+            // make request to profile view
+            $.post( '../includes/profile-view.php', { userid: $userid }, function ( data ) {
+                $( '.profile_view' ).fadeIn( 800, function () {
+                    $( '#load_body' ).addClass( 'animated zoomIn' );
+                    $( '#load_body' ).html( data );
+                } );                
+            })
+        } )
+
+        $( '#close_profile' ).click( function () {
+            $( '.profile_view' ).fadeOut( 500 );
         } )
 
         if ( history.pushState ) {
+            var $currUserName = $( '#currUserId' ).text().trim();
             var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?___username=" + $currUserName;
             window.history.pushState( { path: newUrl }, 'Home page', newUrl );
         }

@@ -17,7 +17,7 @@ try{
 		?>
 
 		<div class="alert alert-info">
-			<strong>Success!</strong> Friend added.
+			<strong>Success!</strong> Connection request sent.
 		</div>
 
 		<?php

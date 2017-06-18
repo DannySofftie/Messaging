@@ -68,7 +68,29 @@ if (!isset($_SESSION['usermail'])) {
             animation-duration: 4s;
             animation-iteration-count: infinite;
         }
-        
+
+        .rss_post {
+            width: 240px;
+            height: 140px;
+            z-index: 99999;
+            position: absolute;
+            top: 40px;
+            right: 2px;
+            box-shadow: 2px 2px 20px 1px rgba(0,0,0,0.4);
+            padding: 5px;
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 5px;
+            display: none;
+        }
+
+        #rss_content {
+            margin-bottom: 8px;
+        }
+
+        #rss_content, #rss_title {
+            font-size: 10px;
+            font-weight: bold;
+        }
     </style>
 
 </head>
@@ -97,7 +119,15 @@ if (!isset($_SESSION['usermail'])) {
                     <li>
                         <span class="btn btn-success" id="notifications" title="See notifications">
                             <sp class="mdi mdi-bell-ring mdi-18px"></sp>
-                            <sp class="badge badge-warning">3</sp>
+                            <sp class="badge badge-warning">
+                                <?php
+    $friendsQuery = $conn->prepare("SELECT * from friends_filter where (friend_id = :userid) and request_status = 0 and block_status = 0");
+    $friendsQuery->bindParam(":userid" , $_SESSION['userid']);
+    $friendsQuery->execute();
+    echo $friendsQuery->rowCount();
+
+                                ?>
+                            </sp>
                         </span>
                     </li>
                     <li>
@@ -114,8 +144,8 @@ if (!isset($_SESSION['usermail'])) {
                     </li>
                     <ul class="float-right hidden-sm-down">
                         <li>
-                            <span class="btn btn-success">
-                                <sp class="mdi mdi-help-circle mdi-18px"></sp>
+                            <span class="btn btn-success" title="Post an RSS feed" id="rss_display">
+                                <sp class="mdi mdi-rss"></sp>
                             </span>
                         </li>
                         <li>
@@ -124,9 +154,24 @@ if (!isset($_SESSION['usermail'])) {
                             </a>
                         </li>
                     </ul>
-
                 </ul>
             </div>
+        </div>
+    </div>
+
+    <span id="userid" style="display: none">
+        <?php  echo $_SESSION['userid']  ?>
+    </span>
+
+    <!--   RSS FEED SECTION   -->
+    <div class="rss_post">
+        <input type="text" class="form-control" id="rss_title" placeholder="RSS Title" />
+        <textarea class="form-control" id="rss_content" rows="4" placeholder="RSS Content to broadcast"></textarea>
+        <div class="text-right">
+            <span class="btn btn-sm btn-warning" id="post_rss">
+                Feed &nbsp;
+                <span class="mdi mdi-rss"></span>
+            </span>
         </div>
     </div>
 
@@ -166,13 +211,44 @@ if (!isset($_SESSION['usermail'])) {
             <img src="../images/preloader/25.gif" alt="" />
         </div>
     </div>
-    <audio src="../audio/audio.mp3" id="rigntone"></audio>
+    <audio src="" id="rigntone"></audio>
     <!--     SCRIPTS     -->
     <script src="../js/jquery-3.1.1.js"></script>
     <script src="../js/bootstrap.js"></script>
     <script src="../js/main.js"></script>
     <script>
         $( function () {
+
+            $( '#rss_display' ).click( function () {
+                $( '.rss_post' ).slideToggle( 'slow' );
+                $( '#rss_title' ).val( '' );
+                $( '#rss_content' ).val( '' );
+            } );
+
+            // post rss content
+            $( '#post_rss' ).click( function () {
+                var $userid = $( '#userid' ).text().trim();
+                var $rss_title = $( '#rss_title' ).val().trim();
+                var $rss_content = $( '#rss_content' ).val().trim();
+
+                if ( $rss_title == '' && $rss_content == '' ) {
+
+                    // don't allow blank feeds
+                    alert( 'Rss title and content cannot be empty' );
+                } else {
+                    $.post( '../includes/rss_section.php',
+                        {
+                            post_rss: true,
+                            userid: $userid,
+                            rss_title: $rss_title,
+                            rss_content: $rss_content
+                        },
+                        function ( data ) {
+                            $( '.rss_post' ).slideUp( 'slow' );
+                        } );
+                }
+            } );
+
 
             var $cont = $( '#preloader_' ).html();
             $( '.nav-top li' ).click( function ( event ) {
@@ -216,7 +292,7 @@ if (!isset($_SESSION['usermail'])) {
 
             $( '#notifications' ).click( function ( event ) {
                 /* Act on the event */
-                goToFile( 'notifications.php' );
+                goToFile( 'notifications.php?fetchAll=true' );
             } );
 
             $( '#gmail-emails' ).click( function ( event ) {
@@ -268,6 +344,7 @@ if (!isset($_SESSION['usermail'])) {
 
             $( '.reject' ).click( function () {
                 $( '.call_response' ).fadeOut( 'slow' );
+                document.getElementById( 'rigntone' ).src = '../audio/audio.mp3';
                 $( '#rigntone' ).attr( 'autoplay', 'false' )
             } )
 

@@ -20,6 +20,7 @@ create table if not exists messages(
 	id int auto_increment primary key,
     message nvarchar(900)
 );
+
 alter table messages add column msg_time datetime default current_timestamp;
 alter table messages add column fkuser_id int;
 alter table messages add foreign key(fkuser_id) references regusers(id) on delete cascade;
@@ -46,18 +47,21 @@ create view chat_messages_filter as
 );
 
 -- create table friends_list
+-- drop table friends_list
 create table if not exists friends_list(
 	my_id int,
     friend_id int,
+    request_status int default 0,
     block_status int default 0,
-    friends_since date
+    friends_since date,
+    constraint fk_friend_intiate_id foreign key(my_id) references regusers(id) on delete cascade
 );
 
 -- create a view to return friends data per specified id
 drop view friends_filter;
 create view  friends_filter as
 (
-	select friends_list.my_id, friends_list.friend_id, friends_list.block_status, friends_list.friends_since ,regusers.email,
+	select friends_list.my_id, friends_list.friend_id, friends_list.request_status, friends_list.block_status, friends_list.friends_since ,regusers.email,
     regusers.prof_image, regusers.fname, regusers.nickname, regusers.about from friends_list 
     left join regusers on friends_list.friend_id=regusers.id
 );
@@ -153,6 +157,15 @@ create table if not exists post_u_reactions(
 
 alter table post_u_reactions add column downvote_r nvarchar(800) after reaction;
 
+-- drop table rss_feeds
+create table rss_feeds(
+    rss_id int auto_increment primary key,
+	userid int,
+    rss_title nvarchar(40),
+    rss_content nvarchar(200),
+    rss_date datetime default current_timestamp,
+    constraint fk_userid foreign key(userid) references regusers(id)
+);
 
 
 
