@@ -346,7 +346,8 @@ if (!isset($_SESSION['usermail'])) {
 
             $( '.reject' ).click( function () {
                 $( '.call_response' ).fadeOut( 'slow' );
-                $( '#rigntone' ).attr( 'autoplay', 'false' )
+                document.getElementById( 'rigntone' ).src = '#';
+                $( '#rigntone' ).attr( 'autoplay', 'false' );
             } )
 
             $( '.answer' ).click( function () {
