@@ -402,7 +402,8 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
                     $currClicked.attr( 'class', 'text-primary' );
 
                     $( '#informational_text' ).css( 'display', 'block' );
-                    $( '#informational_text' ).html( data )
+                    $( '#informational_text' ).html( data );
+                    $( '#informational_text' ).fadeOut( 3000 );
                 },
                 error: function () {
                     alert( 'Upvote failed' )
@@ -424,7 +425,8 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
                     var $currClicked = $( event.target ).closest( '#upvote .downvote' );
                     $currClicked.attr( 'class', 'text-warning' );
                     $( '#informational_text' ).css( 'display', 'block' );
-                    $( '#informational_text' ).html( data )
+                    $( '#informational_text' ).html( data );
+                    $( '#informational_text' ).fadeOut( 3000 );
                 },
                 error: function () {
                     alert( 'Downvote failed' );

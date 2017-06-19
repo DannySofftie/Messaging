@@ -432,13 +432,10 @@ if($loggedInUserId == $userid){
             {
                 unsubscribe: true,
                 userid: $userid,
-                usermail: $useremail,
-                userphone: $userphone,
-                username: $username,
                 destid: $destid
             },
         function ( data ) {
-            if ( data == 'Subscribed' ) {
+            if ( data == 'Unsubscribed' ) {
                 $( '#unsubscribe' ).text( 'Success' );
             } else {
                 $( '#unsubscribe' ).text( 'Failed' );
