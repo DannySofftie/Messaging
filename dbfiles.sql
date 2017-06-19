@@ -75,11 +75,13 @@ create table if not exists contact_addresses(
     phone nvarchar(30),
     email nvarchar(60),
     added_by int,
-    primary key(id)
+    userid int,
+    primary key(id),
+    constraint fk_reuser_id foreign key(userid) references regusers(id) on delete cascade,
+    constraint fk_added_by foreign key(added_by) references regusers(id) on delete cascade
     -- constraint fk_added_by foreign key(added_by) references regusers(id)
 );
 -- alter table contact_addresses drop foreign key fk_added_by;
-alter table contact_addresses add constraint fk_added_by foreign key(added_by) references regusers(id) on delete cascade;
 
 -- create table bs_categories
 create table if not exists bs_categories(

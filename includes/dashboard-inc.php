@@ -171,6 +171,7 @@ require_once 'dbconfig.php';
     </div>
     
 </div>
+
 <script type="text/javascript">
     $( function () {
 
@@ -185,7 +186,7 @@ require_once 'dbconfig.php';
 
                 $( '.rss_feed' ).animate( {
                     scrollTop: $( '.rss_feed' ).get( 0 ).scrollHeight
-                }, 1500 );
+                }, 3000 );
 
                 setTimeout( refreshRSS, 4000 );
             } );

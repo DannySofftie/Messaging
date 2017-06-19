@@ -146,7 +146,6 @@ if (!isset($_SESSION['usermail'])) {
 ?>
 <script type="text/javascript">
     $(function () {
-
         $('.add_friend').click(function (event) {
             /* Act on the event */
             event.preventDefault();

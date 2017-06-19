@@ -210,6 +210,7 @@
     <Compile Include="includes\register-client-inc.php" />
     <Compile Include="includes\request_call_keys.php" />
     <Compile Include="includes\request_response.php" />
+    <Compile Include="includes\rss_section.php" />
     <Compile Include="includes\save-message.php" />
     <Compile Include="includes\sent-messages-fetch.php" />
     <Compile Include="includes\sign-in-inc.php" />
@@ -369,5 +370,6 @@
     <Content Include="js\bootstrap-datepicker.js" />
     <Content Include="js\dataTables.responsive.js" />
     <Content Include="js\jquery-ui.js" />
+    <Content Include="js\jquery.jscroll.js" />
   </ItemGroup>
 </Project>

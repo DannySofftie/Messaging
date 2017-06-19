@@ -179,8 +179,4 @@ try {
 		$(event.target).closest('.friends li').addClass('alert alert-info');
 
 	});
-
-	// update the last time a message was sent or received
-	
-
 </script>

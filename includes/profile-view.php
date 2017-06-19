@@ -290,10 +290,31 @@ if($loggedInUserId == $userid){
                 <div class="dropdown-divider"></div>
                 <div class="text-right">
                     <span>Receive future marketing emails from this business?</span>
+
+                    <?php
+
+        $subCheck = $conn->query("select * from contact_addresses where added_by = '$userid' and userid = '$loggedInUserId'");
+        $subCheck->execute();
+        if($subCheck->rowCount() == 0){
+                    ?>
                     <button class="btn btn-sm btn-primary" id="subscribe">
                         Allow &nbsp;
                         <span class="mdi mdi-checkbox-marked-circle-outline"></span>
                     </button>
+
+                    <?php
+
+        }else{
+                    ?>
+
+                    <button class="btn btn-sm btn-danger" id="unsubscribe">
+                        Unsubscribe &nbsp;
+                        <span class="mdi mdi-cancel"></span>
+                    </button>
+                    <?php
+        }
+                    ?>
+
                 </div>
             </div>
             <div class="col-lg-6 col-md-6">
@@ -386,9 +407,43 @@ if($loggedInUserId == $userid){
                 destid: $destid
             },
         function ( data ) {
-            $( '#subscribe' ).removeClass( 'btn-info' );
-            $( '#subscribe' ).addClass( 'btn-success' );
-            $( '#subscribe' ).text( 'Subscribed' );
+            if ( data == 'Subscribed' ) {
+                $( '#subscribe' ).removeClass( 'btn-info' );
+                $( '#subscribe' ).addClass( 'btn-success' );
+                $( '#subscribe' ).text( 'Subscribed' );
+            } else {
+                $( '#subscribe' ).removeClass( 'btn-info' );
+                $( '#subscribe' ).addClass( 'btn-danger' );
+                $( '#subscribe' ).text( 'Failed' );
+            }
+
         } );
-    } )
+    } );
+
+    $( '#unsubscribe' ).click( function () {
+        // subscribe user to business future emails
+        var $userid = $( '#curr_user_id' ).text().trim();
+        var $useremail = $( '#curr_user_email' ).text().trim();
+        var $userphone = $( '#curr_user_phone' ).text().trim();
+        var $username = $( '#curr_user_name' ).text().trim();
+        var $destid = $( '#dest_user_id' ).text().trim();
+        $( '#unsubscribe span' ).addClass( 'mdi-spin' );
+        $.post( '../includes/subscribe-mail.php?',
+            {
+                unsubscribe: true,
+                userid: $userid,
+                usermail: $useremail,
+                userphone: $userphone,
+                username: $username,
+                destid: $destid
+            },
+        function ( data ) {
+            if ( data == 'Subscribed' ) {
+                $( '#unsubscribe' ).text( 'Success' );
+            } else {
+                $( '#unsubscribe' ).text( 'Failed' );
+            }
+
+        } );
+    } );
 </script>

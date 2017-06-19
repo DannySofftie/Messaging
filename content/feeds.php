@@ -211,7 +211,7 @@ if (!isset($_SESSION['usermail'])) {
             <img src="../images/preloader/25.gif" alt="" />
         </div>
     </div>
-    <audio src="" id="rigntone"></audio>
+    <audio src="#" id="rigntone"></audio>
     <!--     SCRIPTS     -->
     <script src="../js/jquery-3.1.1.js"></script>
     <script src="../js/bootstrap.js"></script>
@@ -333,7 +333,9 @@ if (!isset($_SESSION['usermail'])) {
                             receiver_key = receivedData.receiver_key
                             console.log( 'From ' + initiator_key + ' to me and my key ' + receiver_key )
                             $( '.call_response' ).fadeIn( 'slow' );
-                            $( '#rigntone' ).play();
+
+                            document.getElementById( 'rigntone' ).src = '../audio/audio.mp3';
+                            $( '#rigntone' ).attr( 'autoplay', 'true' )
                         } )
                         console.log( "An active peer is requesting a call." )
                     }
@@ -344,13 +346,13 @@ if (!isset($_SESSION['usermail'])) {
 
             $( '.reject' ).click( function () {
                 $( '.call_response' ).fadeOut( 'slow' );
-                document.getElementById( 'rigntone' ).src = '../audio/audio.mp3';
                 $( '#rigntone' ).attr( 'autoplay', 'false' )
             } )
 
             $( '.answer' ).click( function () {
                 $( '.call_response' ).fadeOut( 'slow' );
                 // evening-shore-56066.herokuapp.com
+                document.getElementById( 'rigntone' ).src = '#';
                 $( '#rigntone' ).attr( 'autoplay', 'false' )
                 var $url = 'http://localhost:7880/initiate?initiator_crypto=' + receiver_key + '&receiver_crypto=' + initiator_key;
                 window.open( $url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=35,left=150,width=900,height=640" );

@@ -446,7 +446,7 @@ if (isset($_GET['fetchNew']) or isset($_POST['fetchNew'])) {
             // make request to profile view
             $.post( '../includes/profile-view.php', { userid: $userid }, function ( data ) {
                 $( '.profile_view' ).fadeIn( 800, function () {
-                    $( '#load_body' ).addClass( 'animated zoomIn' );
+                    $( '#load_body' ).addClass( 'animated fadeIn' );
                     $( '#load_body' ).html( data );
                 } );                
             })

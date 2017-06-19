@@ -31,56 +31,74 @@ if(isset($_GET['fetchAll'])){
             height: 100px;
             overflow-y: scroll;
         }
+
+    .no_notofications {
+        padding: 200px 0;
+    }
 </style>
 
 <div class="notifications">
 
     <?php
-    while($compareQueryRow = $compareQuery->fetch()){
-        // display user details with confirm button
-        $requestId = $compareQueryRow['my_id'];
-        $requestDetailsQueryRow = $conn->prepare("select * from regusers where id = :requestId");
-        $requestDetailsQueryRow -> bindParam(":requestId" , $requestId);
-        $requestDetailsQueryRow->execute();
-        $requestDetailsQueryRow = $requestDetailsQueryRow->fetch();
-        // now display the user details
-        $userData = new stdClass();
-        $userData -> fullname = $requestDetailsQueryRow['fname'] . " " . $requestDetailsQueryRow['nickname'];
-        $userData -> about = $requestDetailsQueryRow['about'];
-        $userData -> image = $requestDetailsQueryRow['prof_image'];
+    if($compareQuery->rowCount()>0){
+        while($compareQueryRow = $compareQuery->fetch()){
+            // display user details with confirm button
+            $requestId = $compareQueryRow['my_id'];
+            $requestDetailsQueryRow = $conn->prepare("select * from regusers where id = :requestId");
+            $requestDetailsQueryRow -> bindParam(":requestId" , $requestId);
+            $requestDetailsQueryRow->execute();
+            $requestDetailsQueryRow = $requestDetailsQueryRow->fetch();
+            // now display the user details
+            $userData = new stdClass();
+            $userData -> fullname = $requestDetailsQueryRow['fname'] . " " . $requestDetailsQueryRow['nickname'];
+            $userData -> about = $requestDetailsQueryRow['about'];
+            $userData -> image = $requestDetailsQueryRow['prof_image'];
 
     ?>
     <!--   CONNECTION REQUEST DETAILS   -->
-
-    <div class="card">
-        <span class="requestId" style="display: none;"><?php  echo $requestId  ?></span>
-        <span class="curr_user_id" style="display: none;"><?php  echo $userid  ?></span>
-        <div class="card-block row">
-            <div class="col-lg-2 col-md-2 col-sm-2">
-                <!-- hold user profile image -->
-                <div class="image_holder">
-                    <img src="<?php echo $userData->image ?>" style="width: 100%; border-radius: 10%; cursor: pointer" />
+    <div class="request_holder container">
+        <div class="card">
+            <span class="requestId" style="display: none;">
+                <?php  echo $requestId  ?>
+            </span>
+            <span class="curr_user_id" style="display: none;">
+                <?php  echo $userid  ?>
+            </span>
+            <div class="card-block row">
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <!-- hold user profile image -->
+                    <div class="image_holder">
+                        <img src="<?php echo $userData->image ?>" style="width: 100%; border-radius: 10%; cursor: pointer" />
+                    </div>
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-8">
+                    <!--  hold user about info  -->
+                    <h5>About</h5>
+                    <i>
+                        <?php  echo $userData->about  ?>
+                    </i>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 response">
+                    <!-- hold response status -->
+                    <span class="btn btn-sm btn-info confirm_request">
+                        Admit &nbsp;
+                        <span class="mdi mdi-checkbox-marked-circle-outline"></span>
+                    </span>
+                    <span class="btn btn-sm btn-danger decline_request">
+                        Decline &nbsp;
+                        <span class="mdi mdi-account-key"></span>
+                    </span>
                 </div>
             </div>
-            <div class="col-lg-8 col-md-8 col-sm-8">
-                <!--  hold user about info  -->
-                <h5>About</h5>
-                <i>
-                    <?php  echo $userData->about  ?>
-                </i>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-2 response">
-                <!-- hold response status -->
-                <span class="btn btn-sm btn-info confirm_request">
-                    Admit &nbsp;
-                    <span class="mdi mdi-checkbox-marked-circle-outline"></span>
-                </span>
-                <span class="btn btn-sm btn-danger decline_request">
-                    Decline &nbsp;
-                    <span class="mdi mdi-account-key"></span>
-                </span>
-            </div>
         </div>
+    </div>
+    <?php
+        }
+    }else{
+    ?>
+
+    <div class="no_notofications text-center">
+        <span class="alert alert-success">You have caught up all notifications.</span>
     </div>
     <?php
     }
@@ -96,7 +114,7 @@ if(isset($_GET['fetchAll'])){
 
         // confirm friend request
         $( '.confirm_request' ).click( function () {
-
+            $( '.confirm_request span' ).addClass( 'mdi-spin' );
             var $targetCard = $( event.target ).closest( '.card' );
 
             var $requestId = $( event.target ).closest( '.card' ).find( '.requestId' );
@@ -107,16 +125,18 @@ if(isset($_GET['fetchAll'])){
 
             $.post( '../includes/request_response.php?confirmRequest=true',
                 {
-                    my_id : $requestId,
-                    friend_id : $curr_user_id
+                    my_id: $requestId,
+                    friend_id: $curr_user_id
                 },
-                function (data) {
+                function ( data ) {
 
                     // success /* DO ACTION */
                     /*
                         REFRESH NOTIFICATIONS FETCH
                     */
-                   alert(data)
+                    $( '.response' ).html(
+                        "<span class='btn btn-primary'>Now connected</span>"
+                        );
                 } );
         } )
 
@@ -136,12 +156,14 @@ if(isset($_GET['fetchAll'])){
                 my_id: $requestId,
                 friend_id: $curr_user_id
             },
-            function (data) {
+            function ( data ) {
                 // success /* DO ACTION */
                 /*
                     REFRESH NOTIFICATIONS FETCH
                 */
-                alert( data );
+                $( '.response' ).html(
+                    "<span class='btn btn-danger'>Request declined</span>"
+                    );
                 $.get( 'notifications.php?fetchAll=true', function () {
                     // returns true
                 } );

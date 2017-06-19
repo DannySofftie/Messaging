@@ -3,6 +3,7 @@ require_once 'dbconfig.php';
 
 // work on received data
 if(isset($_GET['confirmRequest'])){
+    sleep(2);
     $my_id = $_POST['my_id'];
     $current_user_id = $_POST['my_id'];
     $friend_id = $_POST['friend_id'];

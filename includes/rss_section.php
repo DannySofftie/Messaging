@@ -30,7 +30,7 @@ if(isset($_POST['post_rss'])){
 }
 
 if(isset($_POST['fetch_rss'])){
-    $rssFetch = $conn->query("select regusers.fname, regusers.nickname, rss_feeds.* from regusers right join rss_feeds on regusers.id=rss_feeds.userid order by rss_feeds.rss_date desc");
+    $rssFetch = $conn->query("select regusers.fname, regusers.nickname, rss_feeds.* from regusers right join rss_feeds on regusers.id=rss_feeds.userid order by rss_feeds.rss_date asc");
     $rssFetch->execute();
 
     function filterTime($date_b){
@@ -77,11 +77,12 @@ if(isset($_POST['fetch_rss'])){
 ?>
 <div class="card rss_card" style="font-family: 'Trebuchet MS'">
     <div class="card-block">
-        <h6 class="card-title text-success">
+        <h6 class="card-title text-info" title="<?php echo $rssFetchRow['fname']."&nbsp;".$rssFetchRow['nickname'] ?>">
             <?php echo $rssFetchRow['fname']."&nbsp;".$rssFetchRow['nickname'] ?>
         </h6>
         <div class="card-subtitle mb-2 text-muted" style="font-size: 11px">
-            <?php echo filterTime($rssFetchRow['rss_date']) ?>
+            <?php echo filterTime($rssFetchRow['rss_date']) ?><br>
+            <?php  echo $rssFetchRow['rss_title'] ?>
         </div>
         <div class="card-text">
             <h6>
@@ -89,10 +90,8 @@ if(isset($_POST['fetch_rss'])){
             </h6>
         </div>
     </div>
-
 </div>
 <?php
     }
 }
-
 ?>
