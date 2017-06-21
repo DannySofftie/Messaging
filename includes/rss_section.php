@@ -34,8 +34,6 @@ if(isset($_POST['fetch_rss'])){
     $rssFetch->execute();
 
     function filterTime($date_b){
-
-        // current date and time
         $date_a = new DateTime('now');
         $date_b = new DateTime($date_b);
         $interval = date_diff($date_a,$date_b);
@@ -68,7 +66,6 @@ if(isset($_POST['fetch_rss'])){
         if ($interval->format('%m') >= 1) {
             $correctTime = $interval->format('%m months ago');
         }
-
         return $correctTime;
     }
 
