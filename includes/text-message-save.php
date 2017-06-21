@@ -32,3 +32,4 @@ if(!empty($message_content)){
 	}
 }
 
+?>

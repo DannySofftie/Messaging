@@ -506,12 +506,12 @@ if ($selected_option == 'manage_contacts'){
 }
 
     ?>
-
-
    
 <script type="text/javascript">
 
-	$(function(){ 
+    $( function () {
+
+        $.getScript( '../js/jquery-3-1-1.js' );
 
 		var $userid = $('#userid').text();
 		

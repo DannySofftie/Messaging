@@ -1,17 +1,32 @@
-
 <?php
-
 session_start();
 require_once ('dbconfig.php');
-
-
 $userid = $_SESSION['userid'];
 $messageContent = $_GET['messageContent'];
 
 ?>
 
 <span id="userid" style="display: none;"> <?php echo $userid; ?> </span> 
-
+<style>
+    .email_preview{
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(0,0,0,0.4);
+        display: none;
+    }
+    .email_preview .card{
+        margin: 100px;
+    }
+    #close_preview{
+        position: absolute;
+        top: 70px;
+        right: 70px;
+        z-index: 99999;
+    }
+</style>
 
 <?php
 try{
@@ -42,6 +57,7 @@ try{
 			</div>
 			<div>
 				<h6>Select how to send emails</h6>
+                <span class="btn btn-sm btn-danger" id="preview_email"><span class="mdi mdi-eye-outline"></span></span><br />
 				<span class="btn btn-sm btn-outline-primary text-uppercase" id="send_to_all">Email All <i class="mdi mdi-email-alert"></i></span>
 				<span class="btn btn-sm btn-outline-danger text-uppercase" id="filter">Apply filter <i class="mdi mdi-image-filter-center-focus-weak"></i></span>
 				<div class="dropdown-divider">
@@ -106,15 +122,22 @@ catch(PDOException $e){
 	echo "Error ".$e->getMessage();
 
 }
-
     ?>
+<spa
+<div class="email_preview">
+    <span id="close_preview" class="btn text-danger">&times;</span>
+    <div class="card">
+        <div class="email_holder">
 
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
-	$(function(){
-
+    $( function () {
+        var $messageContent = $( '#messageContent' ).val();
 		// check online connectivity
 		if ( navigator.onLine == false ) {
-		    $( '#connectivity' ).html( "<span class='alert alert-danger'>Your internet connection is down.</span>" )
+		    $( '#connectivity' ).html( "<span class='alert alert-danger'>Your internet connection is down.</span>" );
 		}
 		$('.filter-emails').css('display', 'none');
 
@@ -126,9 +149,20 @@ catch(PDOException $e){
 
 		});
 
+		$( '#preview_email' ).click( function () {
+		    $.get( '../includes/html_email.php?message_content=' + $messageContent, function ( data ) {
+		        $( '.email_preview' ).fadeIn( 'slow', function () {
+		            $( '.email_holder' ).html( data );
+		        } );
+		    } );
+		} );
+
+		$( '#close_preview' ).click( function () {
+		    $( '.email_preview' ).fadeOut( 'slow' );
+		} )
 
 		// prepare message content to pass via url
-		var $messageContent = $('#messageContent').val();
+
 
 		// submit filtered emails and message
 		$('form').submit(function(event) {
@@ -138,7 +172,8 @@ catch(PDOException $e){
 
 			var $emailSelected = $('#choosen_email').val();
 
-			// now send message to selected recipient
+			$.get( '../includes/html_email.php?message_content=' + $messageContent, function ( data ) {
+			    // now send message to selected recipient
 			var xhttp = new XMLHttpRequest();
 			xhttp.open('GET','../includes/email-options-send.php?messageContent=' + $messageContent + '&emailSelected=' + $emailSelected);
 			xhttp.onreadystatechange = function(){
@@ -148,8 +183,10 @@ catch(PDOException $e){
 
 				}
 			};
-			xhttp.send(); 
-			
+			xhttp.send();
+			} );
+
+
 		});
 
 

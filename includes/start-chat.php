@@ -192,13 +192,9 @@ catch(PDOException $e){
     $( function () {
 
         // load required scripts;
-        $.getScript( '../js/jquery-3.1.1.js', function () {
-            console.log( '' )
-        } );
+        $.getScript( '../js/jquery-3.1.1.js');
 
-        $.getScript( '../js/bootstrap.js', function () {
-            console.log( '' )
-        } );
+        $.getScript( '../js/bootstrap.js' );
 
         ( function recentChat() {
             var $friend_id = $( '#friend_id' ).text().trim();
@@ -214,6 +210,7 @@ catch(PDOException $e){
         $( '#text-message' ).submit( function ( event ) {
             /* Act on the event */
             event.preventDefault();
+            $.getScript( '../js/jquery-3-1-1.js' );
             $.ajax( {
                 url: '../includes/text-message-save.php',
                 method: 'GET',
@@ -245,7 +242,7 @@ catch(PDOException $e){
             var $friend_id = $( '#friend_id' ).text().trim();
             var $userid = $( '#userid' ).text().trim();
             //192.168.43.164  localhost  evening-shore-56066.herokuapp.com
-            var $url = 'http://localhost:7880/initiate?curr_userID=' + $userid + '&friend_id=' + $friend_id + '&initiator_crypto=' + $initiator_key + '&receiver_crypto=' + $receiver_key;
+            var $url = 'http://192.168.43.164:7880/initiate?curr_userID=' + $userid + '&friend_id=' + $friend_id + '&initiator_crypto=' + $initiator_key + '&receiver_crypto=' + $receiver_key;
             window.open( $url, "_blank", "location=0,toolbar=no,scrollbars=no,resizable=yes,status=no,titlebar=0,top=35,left=150,width=900,height=640" );
         } );
         // end
