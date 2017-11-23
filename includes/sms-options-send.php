@@ -69,8 +69,8 @@ if($_GET['premium'] == 'true'){
 			$msgInsertQuery->execute();
 
 			while ($contactsResRow = $contactsRes->fetch()) {
-				$username   = "Danny";
-				$apikey     = "e1fa9c6dea495228dfa3a1d3abcb02de63ee84b32ab332961bd4a137b3d3afe5";
+				$username   = "DannyU";
+				$apikey     = "e1fa9c6dea495228dfa3a1d3abcb02de63ee84b32ab332961bd4a137b3d3afe57";
 
 				$recipients = $contactsResRow['phone'];
 
